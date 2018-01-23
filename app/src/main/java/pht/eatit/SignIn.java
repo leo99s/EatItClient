@@ -1,6 +1,7 @@
 package pht.eatit;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import info.hoang8f.widget.FButton;
+import pht.eatit.global.Global;
 import pht.eatit.model.User;
 
 public class SignIn extends AppCompatActivity {
@@ -49,7 +51,10 @@ public class SignIn extends AppCompatActivity {
                             User child = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
 
                             if(child.getPassword().equals(edtPassword.getText().toString())){
-                                Toast.makeText(SignIn.this, "Signed in successfully !", Toast.LENGTH_SHORT).show();
+                                Global.activeUser = child;
+                                Intent home = new Intent(SignIn.this, Home.class);
+                                startActivity(home);
+                                finish();
                             }
                             else {
                                 Toast.makeText(SignIn.this, "Wrong password !", Toast.LENGTH_SHORT).show();
