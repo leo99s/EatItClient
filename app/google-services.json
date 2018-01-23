@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "728128427205",
+    "firebase_url": "https://pht-eatit.firebaseio.com",
+    "project_id": "pht-eatit",
+    "storage_bucket": "pht-eatit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728128427205:android:c47dd7463211b786",
+        "android_client_info": {
+          "package_name": "pht.eatit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "728128427205-p1h3t5ngcm2uhlei1ro7mh0d59s8g51c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD16-OmeaC1DcMjMcZDEdQyufm3H0xtfSQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
