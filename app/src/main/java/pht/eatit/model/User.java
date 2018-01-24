@@ -1,6 +1,7 @@
 package pht.eatit.model;
 
 public class User {
+
     private String Phone, Name, Password;
 
     public User() {

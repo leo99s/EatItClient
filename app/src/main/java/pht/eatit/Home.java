@@ -84,7 +84,6 @@ public class Home extends AppCompatActivity
             protected void populateViewHolder(CategoryViewHolder viewHolder, Category model, int position) {
                 viewHolder.name_category.setText(model.getName());
                 Picasso.with(getBaseContext()).load(model.getImage()).into(viewHolder.image_category);
-                final Category clickedItem = model;
 
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override

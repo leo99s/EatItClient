@@ -49,6 +49,7 @@ public class SignIn extends AppCompatActivity {
 
                             // Get user's values
                             User child = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
+                            child.setPhone(edtPhone.getText().toString());  // Set phone
 
                             if(child.getPassword().equals(edtPassword.getText().toString())){
                                 Global.activeUser = child;

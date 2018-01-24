@@ -1,5 +1,6 @@
 package pht.eatit;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -58,12 +59,14 @@ public class FoodList extends AppCompatActivity {
             protected void populateViewHolder(FoodViewHolder viewHolder, pht.eatit.model.Food model, int position) {
                 viewHolder.name_food.setText(model.getName());
                 Picasso.with(getBaseContext()).load(model.getImage()).into(viewHolder.image_food);
-                final pht.eatit.model.Food clickedItem = model;
 
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-                        Toast.makeText(FoodList.this, clickedItem.getName(), Toast.LENGTH_SHORT).show();
+                        Intent foodDetail = new Intent(FoodList.this, FoodDetail.class);
+                        foodDetail.putExtra("Food_ID", adapter.getRef(position).getKey());
+                        startActivity(foodDetail);
+                        finish();
                     }
                 });
             }
