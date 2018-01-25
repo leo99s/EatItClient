@@ -32,7 +32,8 @@ public class Database extends SQLiteAssetHelper {
 
         if(cursor.moveToFirst()){
             do {
-                orderList.add(new Order(cursor.getString(cursor.getColumnIndex("Food_ID")),
+                orderList.add(new Order(
+                        cursor.getString(cursor.getColumnIndex("Food_ID")),
                         cursor.getString(cursor.getColumnIndex("Name")),
                         cursor.getString(cursor.getColumnIndex("Price")),
                         cursor.getString(cursor.getColumnIndex("Quantity")),

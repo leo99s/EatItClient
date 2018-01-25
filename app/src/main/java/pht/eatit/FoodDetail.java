@@ -76,7 +76,7 @@ public class FoodDetail extends AppCompatActivity {
             }
         });
     }
-
+ 
     private void getFoodDetail(String food_id) {
         food.child(Food_ID).addValueEventListener(new ValueEventListener() {
             @Override

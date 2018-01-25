@@ -75,13 +75,13 @@ public class Cart extends AppCompatActivity {
         );
 
         edtAddress.setLayoutParams(layoutParams);
-        alert.setView(edtAddress);  // Add edtAdress to Alert
+        alert.setView(edtAddress);  // Add edtAddress to Alert
         alert.setIcon(R.drawable.ic_shopping_cart);
 
         alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
-                Request currentRequest = new Request(
+                Request newRequest = new Request(
                         Global.activeUser.getPhone(),
                         Global.activeUser.getName(),
                         edtAddress.getText().toString(),
@@ -90,7 +90,7 @@ public class Cart extends AppCompatActivity {
                         );
 
                 // Use System.currentTimeMillis to key and submit to Firebase
-                request.child(String.valueOf(currentTimeMillis())).setValue(currentRequest);
+                request.child(String.valueOf(currentTimeMillis())).setValue(newRequest);
 
                 // Clear the cart
                 new Database(getBaseContext()).clearCart();

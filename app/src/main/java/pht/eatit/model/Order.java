@@ -2,16 +2,16 @@ package pht.eatit.model;
 
 public class Order {
 
-    private String Food_ID, Name, Quantity, Price, Discount;
+    private String Food_ID, Name, Price, Quantity, Discount;
 
     public Order() {
     }
 
-    public Order(String food_ID, String name, String quantity, String price, String discount) {
+    public Order(String food_ID, String name, String price, String quantity, String discount) {
         Food_ID = food_ID;
         Name = name;
-        Quantity = quantity;
         Price = price;
+        Quantity = quantity;
         Discount = discount;
     }
 
@@ -31,20 +31,20 @@ public class Order {
         Name = name;
     }
 
-    public String getQuantity() {
-        return Quantity;
-    }
-
-    public void setQuantity(String quantity) {
-        Quantity = quantity;
-    }
-
     public String getPrice() {
         return Price;
     }
 
     public void setPrice(String price) {
         Price = price;
+    }
+
+    public String getQuantity() {
+        return Quantity;
+    }
+
+    public void setQuantity(String quantity) {
+        Quantity = quantity;
     }
 
     public String getDiscount() {

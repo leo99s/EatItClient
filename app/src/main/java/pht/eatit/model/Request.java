@@ -3,6 +3,7 @@ package pht.eatit.model;
 import java.util.List;
 
 public class Request {
+
     private String Phone, Name, Address, Total;
     private List<Order> Orders;
 

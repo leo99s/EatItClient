@@ -25,15 +25,15 @@ class CardViewHolder extends RecyclerView.ViewHolder implements View.OnClickList
 
     private ItemClickListener itemClickListener;
 
-    public void setItemClickListener(ItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }
-
     public CardViewHolder(View view) {
         super(view);
         name_food = view.findViewById(R.id.name_food);
         price_food = view.findViewById(R.id.price_food);
         quantity_food = view.findViewById(R.id.quantity_food);
+    }
+
+    public void setItemClickListener(ItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
     }
 
     @Override
