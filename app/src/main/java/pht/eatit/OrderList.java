@@ -59,7 +59,7 @@ public class OrderList extends AppCompatActivity {
 
     private String convertCodeToStatus(String status) {
         if(status.equals("0")){
-            return "Placed order";
+            return "Placed";
         }
         else if(status.equals("1")){
             return "Shipping";
