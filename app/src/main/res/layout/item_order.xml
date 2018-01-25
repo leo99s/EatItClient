@@ -22,33 +22,46 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/name_food"
+                android:id="@+id/id_order"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical|start"
                 android:textAllCaps="true"
-                android:text="Food Name"
+                android:text="01"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/price_food"
+                android:id="@+id/phone_order"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical|start"
                 android:textAllCaps="true"
-                android:text="$1.000"
+                android:text="1234567890"
+                android:textStyle="italic" />
+
+            <TextView
+                android:id="@+id/address_order"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical|start"
+                android:textAllCaps="true"
+                android:text="TP. HCM"
+                android:textStyle="italic" />
+
+            <TextView
+                android:id="@+id/status_order"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical|start"
+                android:textAllCaps="true"
+                android:text="Placed order"
                 android:textStyle="italic" />
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/quantity_food"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginRight="16dp" />
 
     </LinearLayout>
 
