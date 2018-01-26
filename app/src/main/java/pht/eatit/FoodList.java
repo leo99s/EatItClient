@@ -19,7 +19,7 @@ import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
-import pht.eatit.model.*;
+import pht.eatit.model.Food;
 import pht.eatit.onclick.ItemClickListener;
 import pht.eatit.viewholder.FoodViewHolder;
 
@@ -34,9 +34,9 @@ public class FoodList extends AppCompatActivity {
 
     FirebaseDatabase database;
     DatabaseReference food;
-    FirebaseRecyclerAdapter<pht.eatit.model.Food, FoodViewHolder> adapter;
+    FirebaseRecyclerAdapter<Food, FoodViewHolder> adapter;
 
-    FirebaseRecyclerAdapter<pht.eatit.model.Food, FoodViewHolder> searchAdapter;
+    FirebaseRecyclerAdapter<Food, FoodViewHolder> searchAdapter;
     List<String> suggestedList = new ArrayList<>();
 
     @Override
@@ -54,8 +54,17 @@ public class FoodList extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         food = database.getReference("Food");
 
+        // Get Category_ID from the previous activity
+        if(getIntent() != null){
+            Category_ID = getIntent().getStringExtra("Category_ID");
+        }
+
+        if(!Category_ID.isEmpty() && Category_ID != null){
+            loadFood(Category_ID);
+        }
+
         // Search
-        bar_search.setHint("Enter a food name !");
+        bar_search.setHint("Enter a food name...");
         bar_search.setSpeechMode(false);
         bar_search.setCardViewElevation(10);
         loadSuggestion();
@@ -68,7 +77,8 @@ public class FoodList extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                List<String> suggestions = new ArrayList<String>();
+                // Changing suggestions when typing
+                List<String> suggestions = new ArrayList<>();
 
                 for (String item : suggestedList){
                     if(item.toLowerCase().contains(bar_search.getText().toLowerCase())){
@@ -84,6 +94,7 @@ public class FoodList extends AppCompatActivity {
 
             }
         });
+
         bar_search.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
             public void onSearchStateChanged(boolean enabled) {
@@ -104,15 +115,6 @@ public class FoodList extends AppCompatActivity {
 
             }
         });
-
-        // Get Category_ID from the previous activity
-        if(getIntent() != null){
-            Category_ID = getIntent().getStringExtra("Category_ID");
-        }
-
-        if(!Category_ID.isEmpty() && Category_ID != null){
-            loadFood(Category_ID);
-        }
     }
 
     private void search(CharSequence text) {
@@ -148,8 +150,7 @@ public class FoodList extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot childSnapshot : dataSnapshot.getChildren()){
                     Food child = childSnapshot.getValue(Food.class);
-                    suggestedList.add(child.getName()); // Add food names to suggestion
-
+                    suggestedList.add(child.getName()); // Add food names to suggestedList
                 }
             }
 
@@ -161,7 +162,7 @@ public class FoodList extends AppCompatActivity {
     }
 
     private void loadFood(String category_id) {
-        adapter = new FirebaseRecyclerAdapter<pht.eatit.model.Food, FoodViewHolder>(
+        adapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(
                 pht.eatit.model.Food.class,
                 R.layout.item_food,
                 FoodViewHolder.class,

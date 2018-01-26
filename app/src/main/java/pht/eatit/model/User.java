@@ -2,7 +2,7 @@ package pht.eatit.model;
 
 public class User {
 
-    private String Phone, Name, Password;
+    private String Phone, Name, Password, Admin;
 
     public User() {
     }
@@ -10,6 +10,7 @@ public class User {
     public User(String name, String password) {
         Name = name;
         Password = password;
+        Admin = "false";
     }
 
     public String getPhone() {
@@ -34,5 +35,13 @@ public class User {
 
     public void setPassword(String password) {
         Password = password;
+    }
+
+    public String getAdmin() {
+        return Admin;
+    }
+
+    public void setAdmin(String admin) {
+        Admin = admin;
     }
 }
