@@ -25,7 +25,7 @@ import pht.eatit.viewholder.FoodViewHolder;
 
 public class FoodList extends AppCompatActivity {
 
-    String Category_ID = "";
+    String category_id = "";
 
     MaterialSearchBar bar_search;
 
@@ -56,11 +56,11 @@ public class FoodList extends AppCompatActivity {
 
         // Get Category_ID from the previous activity
         if(getIntent() != null){
-            Category_ID = getIntent().getStringExtra("Category_ID");
+            category_id = getIntent().getStringExtra("category_id");
         }
 
-        if(!Category_ID.isEmpty() && Category_ID != null){
-            loadFood(Category_ID);
+        if(!category_id.isEmpty() && category_id != null){
+            loadFood(category_id);
         }
 
         // Search
@@ -133,7 +133,7 @@ public class FoodList extends AppCompatActivity {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
                         Intent foodDetail = new Intent(FoodList.this, FoodDetail.class);
-                        foodDetail.putExtra("Food_ID", searchAdapter.getRef(position).getKey());
+                        foodDetail.putExtra("food_id", searchAdapter.getRef(position).getKey());
                         startActivity(foodDetail);
                         finish();
                     }
@@ -145,7 +145,7 @@ public class FoodList extends AppCompatActivity {
     }
 
     private void loadSuggestion() {
-        food.orderByChild("Category_ID").equalTo(Category_ID).addValueEventListener(new ValueEventListener() {
+        food.orderByChild("category_id").equalTo(category_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot childSnapshot : dataSnapshot.getChildren()){
@@ -166,7 +166,7 @@ public class FoodList extends AppCompatActivity {
                 pht.eatit.model.Food.class,
                 R.layout.item_food,
                 FoodViewHolder.class,
-                food.orderByChild("Category_ID").equalTo(category_id)) {
+                food.orderByChild("category_id").equalTo(category_id)) {
             @Override
             protected void populateViewHolder(FoodViewHolder viewHolder, pht.eatit.model.Food model, int position) {
                 viewHolder.name_food.setText(model.getName());
@@ -176,7 +176,7 @@ public class FoodList extends AppCompatActivity {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
                         Intent foodDetail = new Intent(FoodList.this, FoodDetail.class);
-                        foodDetail.putExtra("Food_ID", adapter.getRef(position).getKey());
+                        foodDetail.putExtra("food_id", adapter.getRef(position).getKey());
                         startActivity(foodDetail);
                         finish();
                     }

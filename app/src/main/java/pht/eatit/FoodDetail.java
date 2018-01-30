@@ -21,7 +21,7 @@ import pht.eatit.model.Order;
 
 public class FoodDetail extends AppCompatActivity {
 
-    String Food_ID = "";
+    String food_id = "";
 
     CollapsingToolbarLayout collapsing_toolbar;
     ImageView image_food;
@@ -54,18 +54,18 @@ public class FoodDetail extends AppCompatActivity {
 
         // Get Food_ID from the previous activity
         if(getIntent() != null){
-            Food_ID = getIntent().getStringExtra("Food_ID");
+            food_id = getIntent().getStringExtra("food_id");
         }
 
-        if(!Food_ID.isEmpty() && Food_ID != null){
-            getFoodDetail(Food_ID);
+        if(!food_id.isEmpty() && food_id != null){
+            getFoodDetail(food_id);
         }
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Database(getBaseContext()).addToCart(new Order(
-                        Food_ID,
+                        food_id,
                         currentFood.getName(),
                         currentFood.getPrice(),
                         btnQuantity.getNumber(),
@@ -78,7 +78,7 @@ public class FoodDetail extends AppCompatActivity {
     }
 
     private void getFoodDetail(String food_id) {
-        food.child(Food_ID).addValueEventListener(new ValueEventListener() {
+        food.child(food_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currentFood = dataSnapshot.getValue(Food.class);

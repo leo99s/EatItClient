@@ -34,7 +34,13 @@ public class OrderList extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         rcvOrder.setLayoutManager(layoutManager);
 
-        loadOrder(Global.activeUser.getPhone());
+        // getIntent != null : Có String Extra
+        if(getIntent() == null){    // Start Order Activity when click Order on Menu Navigation
+            loadOrder(Global.activeUser.getPhone());
+        }
+        else {  // Start Order Activity when click notification of order status
+            loadOrder(getIntent().getStringExtra("phone"));
+        }
     }
 
     private void loadOrder(final String phone) {
@@ -48,23 +54,10 @@ public class OrderList extends AppCompatActivity {
                 viewHolder.id_order.setText(adapter.getRef(position).getKey());
                 viewHolder.phone_order.setText(model.getPhone());
                 viewHolder.address_order.setText(model.getAddress());
-                viewHolder.status_order.setText(convertCodeToStatus(model.getStatus()));
+                viewHolder.status_order.setText(Global.convertCodeToStatus(model.getStatus()));
             }
         };
 
         rcvOrder.setAdapter(adapter);
     }
-
-    private String convertCodeToStatus(String status) {
-        if(status.equals("0")){
-            return "Placed";
-        }
-        else if(status.equals("1")){
-            return "Shipping";
-        }
-        else {
-            return "Shipped";
-        }
-    }
-
 }

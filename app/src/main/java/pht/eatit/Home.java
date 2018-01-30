@@ -16,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -24,12 +23,13 @@ import com.squareup.picasso.Picasso;
 import pht.eatit.global.Global;
 import pht.eatit.model.Category;
 import pht.eatit.onclick.ItemClickListener;
+import pht.eatit.service.OrderListener;
 import pht.eatit.viewholder.CategoryViewHolder;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    TextView txtName;
+    TextView txtUserName;
     RecyclerView rcvCategory;
     RecyclerView.LayoutManager layoutManager;
     FirebaseDatabase database;
@@ -67,8 +67,8 @@ public class Home extends AppCompatActivity
 
         // Set name for header
         View header = navigationView.getHeaderView(0);
-        txtName = header.findViewById(R.id.txtName);
-        txtName.setText(Global.activeUser.getName());
+        txtUserName = header.findViewById(R.id.txtUserName);
+        txtUserName.setText(Global.activeUser.getName());
 
         rcvCategory = findViewById(R.id.rcvCategory);
         rcvCategory.setHasFixedSize(true);
@@ -77,7 +77,9 @@ public class Home extends AppCompatActivity
 
         loadCategory();
 
-
+        // Register service
+        Intent service = new Intent(Home.this, OrderListener.class);
+        startService(service);
     }
 
     private void loadCategory() {
@@ -94,7 +96,7 @@ public class Home extends AppCompatActivity
                         Intent foodList = new Intent(Home.this, FoodList.class);
 
                         // Category_ID = Key of Category table
-                        foodList.putExtra("Category_ID", adapter.getRef(position).getKey());
+                        foodList.putExtra("category_id", adapter.getRef(position).getKey());
                         startActivity(foodList);
                     }
                 });
