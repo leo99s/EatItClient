@@ -9,6 +9,8 @@ public class Global {
 
     public static User activeUser;
     public static final String DELETE = "Delete";
+    public static final String PHONE = "Phone";
+    public static final String PASSWORD = "Password";
 
     public static String convertCodeToStatus(String status) {
         if(status.equals("0")){

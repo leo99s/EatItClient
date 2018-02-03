@@ -12,13 +12,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.rey.material.widget.CheckBox;
 import info.hoang8f.widget.FButton;
+import io.paperdb.Paper;
 import pht.eatit.global.Global;
 import pht.eatit.model.User;
 
 public class SignIn extends AppCompatActivity {
 
     MaterialEditText edtPhone, edtPassword;
+    CheckBox ckbRemember;
     FButton btnSignIn;
 
     @Override
@@ -28,7 +31,11 @@ public class SignIn extends AppCompatActivity {
 
         edtPhone = findViewById(R.id.edtPhone);
         edtPassword = findViewById(R.id.edtPassword);
+        ckbRemember = findViewById(R.id.ckbRemember);
         btnSignIn = findViewById(R.id.btnSignIn);
+
+        // Init paper
+        Paper.init(this);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference user = database.getReference("User");
@@ -53,6 +60,12 @@ public class SignIn extends AppCompatActivity {
                                 child.setPhone(edtPhone.getText().toString());  // Set phone
 
                                 if(child.getPassword().equals(edtPassword.getText().toString())){
+                                    // Remember phone & password
+                                    if(ckbRemember.isChecked()){
+                                        Paper.book().write(Global.PHONE, edtPhone.getText().toString());
+                                        Paper.book().write(Global.PASSWORD, edtPassword.getText().toString());
+                                    }
+
                                     Global.activeUser = child;
                                     Intent home = new Intent(SignIn.this, Home.class);
                                     startActivity(home);

@@ -22,6 +22,8 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
+
+import io.paperdb.Paper;
 import pht.eatit.global.Global;
 import pht.eatit.model.Category;
 import pht.eatit.onclick.ItemClickListener;
@@ -45,6 +47,8 @@ public class Home extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Menu");
         setSupportActionBar(toolbar);
+
+        Paper.init(this);
 
         database = FirebaseDatabase.getInstance();
         category = database.getReference("Category");
@@ -156,6 +160,9 @@ public class Home extends AppCompatActivity
             Intent orderList = new Intent(Home.this, OrderList.class);
             startActivity(orderList);
         } else if (id == R.id.nav_sign_out) {
+            // Delete remembered user
+            Paper.book().destroy();
+
             Intent signIn = new Intent(Home.this, SignIn.class);
             signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(signIn);
