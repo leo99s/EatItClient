@@ -36,42 +36,48 @@ public class SignIn extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final ProgressDialog dialog = new ProgressDialog(SignIn.this);
-                dialog.setMessage("Please wait...");
-                dialog.show();
+                if(Global.isConnectedToInternet(SignIn.this)){
+                    final ProgressDialog dialog = new ProgressDialog(SignIn.this);
+                    dialog.setMessage("Please wait...");
+                    dialog.show();
 
-                user.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Check if user existed
-                        if(dataSnapshot.child(edtPhone.getText().toString()).exists()){
-                            dialog.dismiss();
+                    user.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // Check if user existed
+                            if(dataSnapshot.child(edtPhone.getText().toString()).exists()){
+                                dialog.dismiss();
 
-                            // Get user's values
-                            User child = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
-                            child.setPhone(edtPhone.getText().toString());  // Set phone
+                                // Get user's values
+                                User child = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
+                                child.setPhone(edtPhone.getText().toString());  // Set phone
 
-                            if(child.getPassword().equals(edtPassword.getText().toString())){
-                                Global.activeUser = child;
-                                Intent home = new Intent(SignIn.this, Home.class);
-                                startActivity(home);
-                                finish();
+                                if(child.getPassword().equals(edtPassword.getText().toString())){
+                                    Global.activeUser = child;
+                                    Intent home = new Intent(SignIn.this, Home.class);
+                                    startActivity(home);
+                                    finish();
+                                }
+                                else {
+                                    Toast.makeText(SignIn.this, "Wrong password !", Toast.LENGTH_SHORT).show();
+                                }
                             }
                             else {
-                                Toast.makeText(SignIn.this, "Wrong password !", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                                Toast.makeText(SignIn.this, "User doesn't exist !", Toast.LENGTH_SHORT).show();
                             }
                         }
-                        else {
-                            dialog.dismiss();
-                            Toast.makeText(SignIn.this, "User doesn't exist !", Toast.LENGTH_SHORT).show();
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
                         }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                    });
+                }
+                else {
+                    Toast.makeText(SignIn.this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
         });
     }

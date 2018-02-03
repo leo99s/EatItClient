@@ -64,7 +64,7 @@ public class OrderListener extends Service implements ChildEventListener {
         builder.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
-                .setTicker("Hoàng Tâm")
+                .setTicker("Eat It")
                 .setContentInfo("Your order was updated !")
                 .setContentText("Order " + key + " was" + Global.convertCodeToStatus(child.getStatus()).toLowerCase())
                 .setContentIntent(pendingIntent)

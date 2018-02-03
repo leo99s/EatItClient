@@ -19,6 +19,8 @@ import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
+
+import pht.eatit.global.Global;
 import pht.eatit.model.Food;
 import pht.eatit.onclick.ItemClickListener;
 import pht.eatit.viewholder.FoodViewHolder;
@@ -60,7 +62,13 @@ public class FoodList extends AppCompatActivity {
         }
 
         if(!category_id.isEmpty() && category_id != null){
-            loadFood(category_id);
+            if(Global.isConnectedToInternet(FoodList.this)){
+                loadFood(category_id);
+            }
+            else {
+                Toast.makeText(this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
         // Search

@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import pht.eatit.database.Database;
+import pht.eatit.global.Global;
 import pht.eatit.model.Food;
 import pht.eatit.model.Order;
 
@@ -58,7 +59,13 @@ public class FoodDetail extends AppCompatActivity {
         }
 
         if(!food_id.isEmpty() && food_id != null){
-            getFoodDetail(food_id);
+            if(Global.isConnectedToInternet(FoodDetail.this)){
+                getFoodDetail(food_id);
+            }
+            else {
+                Toast.makeText(this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
         btnAdd.setOnClickListener(new View.OnClickListener() {

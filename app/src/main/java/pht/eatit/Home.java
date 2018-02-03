@@ -16,6 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -75,7 +77,13 @@ public class Home extends AppCompatActivity
         layoutManager = new LinearLayoutManager(this);
         rcvCategory.setLayoutManager(layoutManager);
 
-        loadCategory();
+        if(Global.isConnectedToInternet(Home.this)){
+            loadCategory();
+        }
+        else {
+            Toast.makeText(this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Register service
         Intent service = new Intent(Home.this, OrderListener.class);
@@ -125,6 +133,10 @@ public class Home extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.refresh){
+            loadCategory();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
