@@ -17,7 +17,7 @@ import pht.eatit.model.User;
 
 public class SignUp extends AppCompatActivity {
 
-    MaterialEditText edtPhone, edtName, edtPassword;
+    MaterialEditText edtPhone, edtName, edtPassword, edtSecureCode;
     FButton btnSignUp;
 
     @Override
@@ -28,6 +28,7 @@ public class SignUp extends AppCompatActivity {
         edtPhone = findViewById(R.id.edtPhone);
         edtName = findViewById(R.id.edtName);
         edtPassword = findViewById(R.id.edtPassword);
+        edtSecureCode = findViewById(R.id.edtSecureCode);
         btnSignUp = findViewById(R.id.btnSignUp);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -51,7 +52,11 @@ public class SignUp extends AppCompatActivity {
                             }
                             else {
                                 dialog.dismiss();
-                                User child = new User(edtName.getText().toString(), edtPassword.getText().toString());
+                                User child = new User(
+                                        edtName.getText().toString(),
+                                        edtPassword.getText().toString(),
+                                        edtSecureCode.getText().toString());
+
                                 user.child(edtPhone.getText().toString()).setValue(child);
                                 Toast.makeText(SignUp.this, "Signed up successfully !", Toast.LENGTH_SHORT).show();
                                 finish();
