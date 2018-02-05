@@ -23,4 +23,21 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <!-- Rating dialog -->
+    <style name="ratingDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/ratingDialogButton</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/ratingDialogButton</item>
+    </style>
+
+    <style name="ratingDialogButton" parent="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+    <style name="ratingDialogFadeAnim">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
+
 </resources>
