@@ -19,7 +19,7 @@ import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
-
+import pht.eatit.database.Database;
 import pht.eatit.global.Global;
 import pht.eatit.model.Food;
 import pht.eatit.onclick.ItemClickListener;
@@ -41,6 +41,8 @@ public class FoodList extends AppCompatActivity {
     FirebaseRecyclerAdapter<Food, FoodViewHolder> searchAdapter;
     List<String> suggestedList = new ArrayList<>();
 
+    Database favorite;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,8 @@ public class FoodList extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         food = database.getReference("Food");
+
+        favorite = new Database(this);
 
         // Get Category_ID from the previous activity
         if(getIntent() != null){
@@ -176,9 +180,30 @@ public class FoodList extends AppCompatActivity {
                 FoodViewHolder.class,
                 food.orderByChild("category_id").equalTo(category_id)) {
             @Override
-            protected void populateViewHolder(FoodViewHolder viewHolder, pht.eatit.model.Food model, int position) {
+            protected void populateViewHolder(final FoodViewHolder viewHolder, final pht.eatit.model.Food model, final int position) {
                 viewHolder.name_food.setText(model.getName());
                 Picasso.with(getBaseContext()).load(model.getImage()).into(viewHolder.image_food);
+
+                if(favorite.isFavorite(adapter.getRef(position).getKey())){
+                    viewHolder.image_favorite.setImageResource(R.drawable.ic_favorite);
+                }
+
+                // Click to change the state of favorite
+                viewHolder.image_favorite.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!favorite.isFavorite(adapter.getRef(position).getKey())){
+                            favorite.addToFavorite(adapter.getRef(position).getKey());
+                            viewHolder.image_favorite.setImageResource(R.drawable.ic_favorite);
+                            Toast.makeText(FoodList.this, model.getName() + " was added to favorite !", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            favorite.deleteFromFavorite(adapter.getRef(position).getKey());
+                            viewHolder.image_favorite.setImageResource(R.drawable.ic_favorite_border);
+                            Toast.makeText(FoodList.this, model.getName() + " was deleted from favorite !", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
