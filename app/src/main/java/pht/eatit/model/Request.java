@@ -4,18 +4,19 @@ import java.util.List;
 
 public class Request {
 
-    private String Phone, Name, Address, Total, Status; // Status (0 : Placed, 1 : Shipping, 2 : Shipped)
+    private String Phone, Name, Address, Total, Status, Comment; // Status (0 : Placed, 1 : Shipping, 2 : Shipped)
     private List<Order> Orders;
 
     public Request() {
     }
 
-    public Request(String phone, String name, String address, String total, List<Order> orders) {
+    public Request(String phone, String name, String address, String total, String status, String comment, List<Order> orders) {
         Phone = phone;
         Name = name;
         Address = address;
         Total = total;
-        Status = "0";
+        Status = status;
+        Comment = comment;
         Orders = orders;
     }
 
@@ -57,6 +58,14 @@ public class Request {
 
     public void setStatus(String status) {
         Status = status;
+    }
+
+    public String getComment() {
+        return Comment;
+    }
+
+    public void setComment(String comment) {
+        Comment = comment;
     }
 
     public List<Order> getOrders() {
