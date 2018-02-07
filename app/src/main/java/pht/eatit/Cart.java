@@ -141,7 +141,7 @@ public class Cart extends AppCompatActivity {
                     Token serverToken = childDataSnapshot.getValue(Token.class);
 
                     // Create raw payload to send
-                    Notification notification = new Notification("Hoàng Tâm", "You have a new order" + id_order);
+                    Notification notification = new Notification("Hoàng Tâm", "You have a new order " + id_order);
                     Sender content = new Sender(serverToken.getToken(), notification);
                     mService.sendNotification(content)
                             .enqueue(new Callback<Response>() {
