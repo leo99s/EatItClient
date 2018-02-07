@@ -9,14 +9,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +25,16 @@ import java.util.Locale;
 import info.hoang8f.widget.FButton;
 import pht.eatit.database.Database;
 import pht.eatit.global.Global;
+import pht.eatit.model.Notification;
 import pht.eatit.model.Order;
 import pht.eatit.model.Request;
+import pht.eatit.model.Response;
+import pht.eatit.model.Sender;
+import pht.eatit.model.Token;
+import pht.eatit.remote.APIService;
 import pht.eatit.viewholder.CartAdapter;
+import retrofit2.Call;
+import retrofit2.Callback;
 import static java.lang.System.currentTimeMillis;
 
 public class Cart extends AppCompatActivity {
@@ -42,10 +50,14 @@ public class Cart extends AppCompatActivity {
     List<Order> orderList = new ArrayList<>();
     CartAdapter adapter;
 
+    APIService mService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+
+        mService = Global.getFCMService();
 
         total_price = findViewById(R.id.total_price);
         btnOrder = findViewById(R.id.btnOrder);
@@ -99,12 +111,12 @@ public class Cart extends AppCompatActivity {
                         );
 
                 // Use System.currentTimeMillis to key and submit to Firebase
-                request.child(String.valueOf(currentTimeMillis())).setValue(newRequest);
+                String id_order = String.valueOf(currentTimeMillis());
+                request.child(id_order).setValue(newRequest);
 
                 // Clear the cart
                 new Database(getBaseContext()).clearCart();
-                Toast.makeText(Cart.this, "Thank for your order !", Toast.LENGTH_SHORT).show();
-                finish();
+                sendNotification(id_order);
             }
         });
 
@@ -116,6 +128,50 @@ public class Cart extends AppCompatActivity {
         });
 
         alert.show();
+    }
+
+    private void sendNotification(final String id_order) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Token");
+        Query tokens = reference.orderByChild("isServerToken").equalTo(true);
+
+        tokens.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot childDataSnapshot : dataSnapshot.getChildren()){
+                    Token serverToken = childDataSnapshot.getValue(Token.class);
+
+                    // Create raw payload to send
+                    Notification notification = new Notification("Hoàng Tâm", "You have a new order" + id_order);
+                    Sender content = new Sender(serverToken.getToken(), notification);
+                    mService.sendNotification(content)
+                            .enqueue(new Callback<Response>() {
+                                @Override
+                                public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                                    if(response.code() == 200){
+                                        if(response.body().success == 1){
+                                            Toast.makeText(Cart.this, "Thanks for your order !", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        }
+                                        else {
+                                            Toast.makeText(Cart.this, "Sorry, something was wrong !", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<Response> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void loadCart() {

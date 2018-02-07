@@ -3,7 +3,6 @@ package pht.eatit;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -17,17 +16,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
-
 import io.paperdb.Paper;
 import pht.eatit.global.Global;
 import pht.eatit.model.Category;
+import pht.eatit.model.Token;
 import pht.eatit.onclick.ItemClickListener;
-import pht.eatit.service.OrderListener;
 import pht.eatit.viewholder.CategoryViewHolder;
 
 public class Home extends AppCompatActivity
@@ -89,9 +87,14 @@ public class Home extends AppCompatActivity
             return;
         }
 
-        // Register service
-        Intent service = new Intent(Home.this, OrderListener.class);
-        startService(service);
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+    }
+
+    private void updateToken(String token) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference("Token");
+        Token child = new Token(token, false);
+        reference.child(Global.activeUser.getPhone()).setValue(child);
     }
 
     private void loadCategory() {

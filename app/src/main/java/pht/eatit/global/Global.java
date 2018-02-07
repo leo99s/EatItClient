@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import pht.eatit.model.User;
+import pht.eatit.remote.APIService;
+import pht.eatit.remote.RetrofitClient;
+import retrofit2.Retrofit;
 
 public class Global {
 
@@ -11,6 +14,11 @@ public class Global {
     public static final String DELETE = "Delete";
     public static final String PHONE = "Phone";
     public static final String PASSWORD = "Password";
+    public static final String BASE_FCM_URL = "https://fcm.googleapis.com/";
+
+    public static APIService getFCMService(){
+        return RetrofitClient.getClient(BASE_FCM_URL).create(APIService.class);
+    }
 
     public static String convertCodeToStatus(String status) {
         if(status.equals("0")){
