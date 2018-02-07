@@ -14,7 +14,7 @@ public class Global {
     public static final String DELETE = "Delete";
     public static final String PHONE = "Phone";
     public static final String PASSWORD = "Password";
-    public static final String BASE_FCM_URL = "https://fcm.googleapis.com/";
+    public static final String BASE_FCM_URL = "https://fcm.googleapis.com";
 
     public static APIService getFCMService(){
         return RetrofitClient.getClient(BASE_FCM_URL).create(APIService.class);

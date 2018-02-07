@@ -113,10 +113,10 @@ public class Cart extends AppCompatActivity {
                 // Use System.currentTimeMillis to key and submit to Firebase
                 String id_order = String.valueOf(currentTimeMillis());
                 request.child(id_order).setValue(newRequest);
+                sendNotification(id_order);
 
                 // Clear the cart
                 new Database(getBaseContext()).clearCart();
-                sendNotification(id_order);
             }
         });
 
@@ -131,8 +131,8 @@ public class Cart extends AppCompatActivity {
     }
 
     private void sendNotification(final String id_order) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Token");
-        Query tokens = reference.orderByChild("isServerToken").equalTo(true);
+        DatabaseReference reference = database.getInstance().getReference("Token");
+        Query tokens = reference.orderByChild("serverToken").equalTo(true);
 
         tokens.addValueEventListener(new ValueEventListener() {
             @Override
