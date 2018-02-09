@@ -2,17 +2,26 @@ package pht.eatit;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.facebook.FacebookSdk;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import info.hoang8f.widget.FButton;
 import io.paperdb.Paper;
 import pht.eatit.global.Global;
@@ -26,7 +35,10 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_welcome);
+
+        printKeyHash();
 
         txtSlogan = findViewById(R.id.txtSlogan);
         btnSignIn = findViewById(R.id.btnSignIn);
@@ -61,6 +73,22 @@ public class Welcome extends AppCompatActivity {
                 startActivity(signUp);
             }
         });
+    }
+
+    private void printKeyHash() {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo("pht.eatit", PackageManager.GET_SIGNATURES);
+
+            for (Signature signature : info.signatures){
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
     }
 
     private void signIn(final String phone, final String password) {
