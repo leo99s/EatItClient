@@ -64,7 +64,7 @@ public class SignIn extends AppCompatActivity {
                     dialog.setMessage("Please wait...");
                     dialog.show();
 
-                    user.addValueEventListener(new ValueEventListener() {
+                    user.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             // Check if user existed
@@ -86,6 +86,7 @@ public class SignIn extends AppCompatActivity {
                                     Intent home = new Intent(SignIn.this, Home.class);
                                     startActivity(home);
                                     finish();
+                                    user.removeEventListener(this);
                                 }
                                 else {
                                     Toast.makeText(SignIn.this, "Wrong password !", Toast.LENGTH_SHORT).show();
