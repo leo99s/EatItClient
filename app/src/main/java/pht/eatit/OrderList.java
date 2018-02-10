@@ -1,13 +1,19 @@
 package pht.eatit;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import pht.eatit.global.Global;
 import pht.eatit.model.Request;
 import pht.eatit.viewholder.OrderViewHolder;
@@ -60,20 +66,30 @@ public class OrderList extends AppCompatActivity {
     }
 
     private void loadOrder(final String phone) {
-        adapter = new FirebaseRecyclerAdapter<Request, OrderViewHolder>(
-                Request.class,
-                R.layout.item_order,
-                OrderViewHolder.class,
-                request.orderByChild("phone").equalTo(phone)) {
+        Query query = request.orderByChild("phone").equalTo(phone);
+
+        FirebaseRecyclerOptions<Request> options = new FirebaseRecyclerOptions.Builder<Request>()
+                .setQuery(query, Request.class).build();
+
+        adapter = new FirebaseRecyclerAdapter<Request, OrderViewHolder>(options) {
             @Override
-            protected void populateViewHolder(OrderViewHolder viewHolder, Request model, int position) {
-                viewHolder.id_order.setText(adapter.getRef(position).getKey());
-                viewHolder.phone_order.setText(model.getPhone());
-                viewHolder.address_order.setText(model.getAddress());
-                viewHolder.status_order.setText(Global.convertCodeToStatus(model.getStatus()));
+            public OrderViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_order, parent, false);
+
+                return new OrderViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull OrderViewHolder holder, int position, @NonNull Request model) {
+                holder.id_order.setText(adapter.getRef(position).getKey());
+                holder.phone_order.setText(model.getPhone());
+                holder.address_order.setText(model.getAddress());
+                holder.status_order.setText(Global.convertCodeToStatus(model.getStatus()));
             }
         };
 
+        adapter.startListening();
         rcvOrder.setAdapter(adapter);
     }
 }
