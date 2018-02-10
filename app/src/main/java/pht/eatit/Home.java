@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,8 +46,10 @@ public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     TextView txtUserName;
+    SwipeRefreshLayout swipe_layout;
     RecyclerView rcvCategory;
     RecyclerView.LayoutManager layoutManager;
+
     FirebaseDatabase database;
     DatabaseReference category;
     FirebaseRecyclerAdapter<Category, CategoryViewHolder> adapter;
@@ -86,6 +89,41 @@ public class Home extends AppCompatActivity
         View header = navigationView.getHeaderView(0);
         txtUserName = header.findViewById(R.id.txtUserName);
         txtUserName.setText(Global.activeUser.getName());
+
+        swipe_layout = findViewById(R.id.swipe_layout);
+        swipe_layout.setColorSchemeResources(
+                R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark
+        );
+
+        // Loading for the first time by default
+        swipe_layout.post(new Runnable() {
+            @Override
+            public void run() {
+                if(Global.isConnectedToInternet(Home.this)){
+                    loadCategory();
+                }
+                else {
+                    Toast.makeText(Home.this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+        });
+
+        swipe_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(Global.isConnectedToInternet(Home.this)){
+                    loadCategory();
+                }
+                else {
+                    Toast.makeText(Home.this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+        });
 
         rcvCategory = findViewById(R.id.rcvCategory);
         rcvCategory.setHasFixedSize(true);
@@ -132,6 +170,7 @@ public class Home extends AppCompatActivity
         };
 
         rcvCategory.setAdapter(adapter);
+        swipe_layout.setRefreshing(false);
     }
 
     @Override
