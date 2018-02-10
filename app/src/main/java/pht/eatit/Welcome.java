@@ -1,6 +1,7 @@
 package pht.eatit;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -13,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.facebook.FacebookSdk;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,6 +26,8 @@ import info.hoang8f.widget.FButton;
 import io.paperdb.Paper;
 import pht.eatit.global.Global;
 import pht.eatit.model.User;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Welcome extends AppCompatActivity {
 
@@ -33,8 +35,21 @@ public class Welcome extends AppCompatActivity {
     FButton btnSignIn, btnSignUp;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(
+                new CalligraphyConfig.Builder()
+                        .setDefaultFontPath("fonts/restaurant.otf")
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+        );
+
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_welcome);
 

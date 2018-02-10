@@ -1,5 +1,6 @@
 package pht.eatit;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,10 +32,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import dmax.dialog.SpotsDialog;
 import io.paperdb.Paper;
 import pht.eatit.global.Global;
@@ -41,6 +41,8 @@ import pht.eatit.model.Category;
 import pht.eatit.model.Token;
 import pht.eatit.onclick.ItemClickListener;
 import pht.eatit.viewholder.CategoryViewHolder;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,8 +57,21 @@ public class Home extends AppCompatActivity
     FirebaseRecyclerAdapter<Category, CategoryViewHolder> adapter;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(
+                new CalligraphyConfig.Builder()
+                        .setDefaultFontPath("fonts/restaurant.otf")
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+        );
+
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Menu");
@@ -127,13 +142,13 @@ public class Home extends AppCompatActivity
 
         rcvCategory = findViewById(R.id.rcvCategory);
         rcvCategory.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        rcvCategory.setLayoutManager(layoutManager);
+        //layoutManager = new LinearLayoutManager(this);
+        //rcvCategory.setLayoutManager(layoutManager);
+        rcvCategory.setLayoutManager(new GridLayoutManager(Home.this,2));
 
         if(Global.isConnectedToInternet(Home.this)){
             loadCategory();
-        }
-        else {
+        } else {
             Toast.makeText(this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
             return;
         }

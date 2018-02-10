@@ -1,6 +1,7 @@
 package pht.eatit;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -25,10 +26,8 @@ import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -48,8 +47,9 @@ import pht.eatit.remote.APIService;
 import pht.eatit.viewholder.CartAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static java.lang.System.currentTimeMillis;
-import static java.lang.System.in;
 
 public class Cart extends AppCompatActivity {
 
@@ -74,8 +74,21 @@ public class Cart extends AppCompatActivity {
     private static final int PAYPAL_REQUEST_CODE = 9999;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(
+                new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/restaurant.otf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
+
         setContentView(R.layout.activity_cart);
 
         // Init PayPal

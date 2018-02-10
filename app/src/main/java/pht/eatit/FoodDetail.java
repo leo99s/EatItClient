@@ -1,5 +1,6 @@
 package pht.eatit;
 
+import android.content.Context;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -19,15 +20,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.stepstone.apprating.AppRatingDialog;
 import com.stepstone.apprating.listener.RatingDialogListener;
-
-import java.lang.reflect.Array;
 import java.util.Arrays;
-
 import pht.eatit.database.Database;
 import pht.eatit.global.Global;
 import pht.eatit.model.Food;
 import pht.eatit.model.Order;
 import pht.eatit.model.Rating;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class FoodDetail extends AppCompatActivity implements RatingDialogListener {
 
@@ -46,8 +46,21 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
     Food currentFood;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(
+                new CalligraphyConfig.Builder()
+                        .setDefaultFontPath("fonts/restaurant.otf")
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+        );
+
         setContentView(R.layout.activity_food_detail);
 
         collapsing_toolbar = findViewById(R.id.collapsing_toolbar);

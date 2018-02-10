@@ -2,6 +2,7 @@ package pht.eatit;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,8 @@ import info.hoang8f.widget.FButton;
 import io.paperdb.Paper;
 import pht.eatit.global.Global;
 import pht.eatit.model.User;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SignIn extends AppCompatActivity {
 
@@ -33,8 +36,21 @@ public class SignIn extends AppCompatActivity {
     DatabaseReference user;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(
+                new CalligraphyConfig.Builder()
+                        .setDefaultFontPath("fonts/restaurant.otf")
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+        );
+
         setContentView(R.layout.activity_sign_in);
 
         edtPhone = findViewById(R.id.edtPhone);

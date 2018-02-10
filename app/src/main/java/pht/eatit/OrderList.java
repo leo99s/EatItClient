@@ -1,5 +1,6 @@
 package pht.eatit;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import pht.eatit.global.Global;
 import pht.eatit.model.Request;
 import pht.eatit.viewholder.OrderViewHolder;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class OrderList extends AppCompatActivity {
 
@@ -21,8 +24,21 @@ public class OrderList extends AppCompatActivity {
     FirebaseRecyclerAdapter<Request, OrderViewHolder> adapter;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(
+                new CalligraphyConfig.Builder()
+                        .setDefaultFontPath("fonts/restaurant.otf")
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+        );
+
         setContentView(R.layout.activity_order_list);
 
         rcvOrder = findViewById(R.id.rcvOrder);

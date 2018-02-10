@@ -1,6 +1,7 @@
 package pht.eatit;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,8 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import info.hoang8f.widget.FButton;
 import pht.eatit.global.Global;
 import pht.eatit.model.User;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SignUp extends AppCompatActivity {
 
@@ -21,8 +24,21 @@ public class SignUp extends AppCompatActivity {
     FButton btnSignUp;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(
+                new CalligraphyConfig.Builder()
+                        .setDefaultFontPath("fonts/restaurant.otf")
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+        );
+
         setContentView(R.layout.activity_sign_up);
 
         edtPhone = findViewById(R.id.edtPhone);

@@ -9,15 +9,16 @@ import pht.eatit.onclick.ItemClickListener;
 
 public class FoodViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    public TextView name_food;
+    public TextView name_food, price_food;
     public ImageView image_food, image_favorite, image_share;
 
     private ItemClickListener itemClickListener;
 
     public FoodViewHolder(View view) {
         super(view);
-        name_food = view.findViewById(R.id.name_food);
         image_food = view.findViewById(R.id.image_food);
+        name_food = view.findViewById(R.id.name_food);
+        price_food = view.findViewById(R.id.price_food);
         image_favorite = view.findViewById(R.id.image_favorite);
         image_share = view.findViewById(R.id.image_share);
         view.setOnClickListener(this);

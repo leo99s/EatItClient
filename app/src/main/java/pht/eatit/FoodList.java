@@ -1,5 +1,6 @@
 package pht.eatit;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -12,7 +13,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
-
 import com.facebook.CallbackManager;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
@@ -26,7 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
 import java.util.ArrayList;
 import java.util.List;
 import pht.eatit.database.Database;
@@ -34,6 +33,8 @@ import pht.eatit.global.Global;
 import pht.eatit.model.Food;
 import pht.eatit.onclick.ItemClickListener;
 import pht.eatit.viewholder.FoodViewHolder;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class FoodList extends AppCompatActivity {
 
@@ -86,8 +87,21 @@ public class FoodList extends AppCompatActivity {
     };
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(
+                new CalligraphyConfig.Builder()
+                        .setDefaultFontPath("fonts/restaurant.otf")
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+        );
+
         setContentView(R.layout.activity_food_list);
 
         // Init Facebook
@@ -277,6 +291,7 @@ public class FoodList extends AppCompatActivity {
             @Override
             protected void populateViewHolder(final FoodViewHolder viewHolder, final pht.eatit.model.Food model, final int position) {
                 viewHolder.name_food.setText(model.getName());
+                viewHolder.price_food.setText(String.format("$ %s", model.getPrice()));
                 Picasso.with(getBaseContext()).load(model.getImage()).into(viewHolder.image_food);
 
                 if(favorite.isFavorite(adapter.getRef(position).getKey())){
