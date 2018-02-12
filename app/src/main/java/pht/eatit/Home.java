@@ -25,6 +25,8 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.andremion.counterfab.CounterFab;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,6 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 import dmax.dialog.SpotsDialog;
 import io.paperdb.Paper;
+import pht.eatit.database.Database;
 import pht.eatit.global.Global;
 import pht.eatit.model.Category;
 import pht.eatit.model.Token;
@@ -54,6 +57,7 @@ public class Home extends AppCompatActivity
     SwipeRefreshLayout swipe_layout;
     RecyclerView rcvCategory;
     RecyclerView.LayoutManager layoutManager;
+    CounterFab fab;
 
     FirebaseDatabase database;
     DatabaseReference category;
@@ -116,7 +120,9 @@ public class Home extends AppCompatActivity
             }
         };
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
+        fab.setCount(new Database(this).getCartCount());
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -191,6 +197,22 @@ public class Home extends AppCompatActivity
         }
 
         updateToken(FirebaseInstanceId.getInstance().getToken());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fab.setCount(new Database(this).getCartCount());
+
+        if(adapter != null){
+            adapter.startListening();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 
     private void updateToken(String token) {

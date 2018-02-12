@@ -36,6 +36,7 @@ import java.util.List;
 import pht.eatit.database.Database;
 import pht.eatit.global.Global;
 import pht.eatit.model.Food;
+import pht.eatit.model.Order;
 import pht.eatit.onclick.ItemClickListener;
 import pht.eatit.viewholder.FoodViewHolder;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -195,6 +196,7 @@ public class FoodList extends AppCompatActivity {
         bar_search.setCardViewElevation(10);
         loadSuggestion();
         bar_search.setLastSuggestions(suggestedList);
+
         bar_search.addTextChangeListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -241,6 +243,21 @@ public class FoodList extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (adapter != null) {
+            adapter.startListening();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 
     private void search(CharSequence text) {
@@ -343,6 +360,21 @@ public class FoodList extends AppCompatActivity {
                             holder.image_favorite.setImageResource(R.drawable.ic_favorite_border);
                             Toast.makeText(FoodList.this, model.getName() + " was deleted from favorite !", Toast.LENGTH_SHORT).show();
                         }
+                    }
+                });
+
+                holder.image_cart.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new Database(getBaseContext()).addToCart(new Order(
+                                adapter.getRef(position).getKey(),
+                                model.getName(),
+                                model.getPrice(),
+                                "1",
+                                model.getDiscount()
+                        ));
+
+                        Toast.makeText(FoodList.this, "Added to your cart !", Toast.LENGTH_SHORT).show();
                     }
                 });
 

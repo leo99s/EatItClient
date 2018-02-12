@@ -90,4 +90,20 @@ public class Database extends SQLiteAssetHelper {
         String query = String.format("DELETE FROM Favorite WHERE Food_ID = '%s';", food_id);
         database.execSQL(query);
     }
-} 
+
+    public int getCartCount() {
+        int count = 0;
+        SQLiteDatabase database = getReadableDatabase();
+        String query = String.format("SELECT COUNT(*) FROM OrderDetail");
+        Cursor cursor = database.rawQuery(query, null);
+
+        if(cursor.moveToFirst()){
+            do {
+                count = cursor.getInt(0);
+            } while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        return count;
+    }
+}
