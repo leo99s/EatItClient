@@ -53,7 +53,7 @@ import static java.lang.System.currentTimeMillis;
 
 public class Cart extends AppCompatActivity {
 
-    TextView total_price;
+    public TextView total_price;
     FButton btnOrder;
     RecyclerView rcvCart;
     RecyclerView.LayoutManager layoutManager;

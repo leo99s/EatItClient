@@ -25,7 +25,7 @@ public class Database extends SQLiteAssetHelper {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
         String table = "OrderDetail";
-        String[] column = { "Food_ID", "Name", "Price", "Quantity", "Discount" };
+        String[] column = { "ID", "Food_ID", "Name", "Price", "Quantity", "Discount" };
 
         queryBuilder.setTables(table);
         Cursor cursor = queryBuilder.query(database, column, null, null, null, null, null);
@@ -33,6 +33,7 @@ public class Database extends SQLiteAssetHelper {
         if(cursor.moveToFirst()){
             do {
                 orderList.add(new Order(
+                        cursor.getInt(cursor.getColumnIndex("ID")),
                         cursor.getString(cursor.getColumnIndex("Food_ID")),
                         cursor.getString(cursor.getColumnIndex("Name")),
                         cursor.getString(cursor.getColumnIndex("Price")),
@@ -105,5 +106,11 @@ public class Database extends SQLiteAssetHelper {
 
         cursor.close();
         return count;
+    }
+
+    public void updateOrder(Order order) {
+        SQLiteDatabase database = getReadableDatabase();
+        String query = String.format("UPDATE OrderDetail SET Quantity = %s WHERE ID = %d", order.getQuantity(), order.getID());
+        database.execSQL(query);
     }
 }
