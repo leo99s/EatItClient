@@ -4,16 +4,17 @@ import java.util.List;
 
 public class Request {
 
-    private String phone, name, address, total, status, comment, payment; // Status (0 : Placed, 1 : Shipping, 2 : Shipped)
+    private String phone, name, address, latlng, total, status, comment, payment; // Status (0 : Placed, 1 : Shipping, 2 : Shipped)
     private List<Order> orders;
 
     public Request() {
     }
 
-    public Request(String phone, String name, String address, String total, String status, String comment, String payment, List<Order> orders) {
+    public Request(String phone, String name, String address, String latlng, String total, String status, String comment, String payment, List<Order> orders) {
         this.phone = phone;
         this.name = name;
         this.address = address;
+        this.latlng = latlng;
         this.total = total;
         this.status = status;
         this.comment = comment;
@@ -43,6 +44,14 @@ public class Request {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getLatlng() {
+        return latlng;
+    }
+
+    public void setLatlng(String latlng) {
+        this.latlng = latlng;
     }
 
     public String getTotal() {

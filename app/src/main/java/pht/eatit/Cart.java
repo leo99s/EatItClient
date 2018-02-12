@@ -9,11 +9,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +31,8 @@ import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.rey.material.widget.EditText;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.math.BigDecimal;
@@ -65,6 +72,8 @@ public class Cart extends AppCompatActivity {
     CartAdapter adapter;
 
     APIService mService;
+
+    Place orderPlace;
 
     static PayPalConfiguration config = new PayPalConfiguration()
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX) // Using SandBox for testing, else ENVIRONMENT_PRODUCTION
@@ -131,8 +140,33 @@ public class Cart extends AppCompatActivity {
 
         LayoutInflater inflater = this.getLayoutInflater();
         View comment_order = inflater.inflate(R.layout.comment_order, null);
-        final MaterialEditText edtAddress = comment_order.findViewById(R.id.edtAddress);
+
+        final PlaceAutocompleteFragment edtAddress = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.edtAddress);
         final MaterialEditText edtComment = comment_order.findViewById(R.id.edtComment);
+
+        // Hide search icon before fragment
+        edtAddress.getView().findViewById(R.id.place_autocomplete_search_button).setVisibility(View.GONE);
+
+        // Set hint for Autocomplete EditText
+        ((android.widget.EditText) edtAddress.getView().findViewById(R.id.place_autocomplete_search_input))
+                .setHint("Address");
+
+        // Set text size
+        ((android.widget.EditText) edtAddress.getView().findViewById(R.id.place_autocomplete_search_input))
+                .setTextSize(20);
+
+        // Get address from Place Autocomplete
+        edtAddress.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                orderPlace = place;
+            }
+
+            @Override
+            public void onError(Status status) {
+                Log.e("Place Error", status.getStatusMessage());
+            }
+        });
 
         alert.setView(comment_order);
 
@@ -140,7 +174,7 @@ public class Cart extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 // Show PayPal
-                address = edtAddress.getText().toString();
+                address = orderPlace.getAddress().toString();
                 comment = edtComment.getText().toString();
                 String fmtPrice = total_price.getText().toString()
                         .replace("$", "")
@@ -156,6 +190,9 @@ public class Cart extends AppCompatActivity {
                 intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
                 intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
                 startActivityForResult(intent, PAYPAL_REQUEST_CODE);
+
+                // Remove fragment
+                getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.edtAddress)).commit();
             }
         });
 
@@ -163,6 +200,9 @@ public class Cart extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 dialog.dismiss();
+
+                // Remove fragment
+                getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.edtAddress)).commit();
             }
         });
 
@@ -185,6 +225,7 @@ public class Cart extends AppCompatActivity {
                                 Global.activeUser.getPhone(),
                                 Global.activeUser.getName(),
                                 address,
+                                String.format("%s,%s", orderPlace.getLatLng().latitude, orderPlace.getLatLng().longitude),
                                 total_price.getText().toString(),
                                 "0",
                                 comment,
