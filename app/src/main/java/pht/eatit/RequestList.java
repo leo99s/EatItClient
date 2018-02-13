@@ -16,18 +16,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import pht.eatit.global.Global;
 import pht.eatit.model.Request;
-import pht.eatit.viewholder.OrderViewHolder;
+import pht.eatit.viewholder.RequestViewHolder;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class OrderList extends AppCompatActivity {
+public class RequestList extends AppCompatActivity {
 
-    RecyclerView rcvOrder;
+    RecyclerView rcvRequest;
     RecyclerView.LayoutManager layoutManager;
 
     FirebaseDatabase database;
     DatabaseReference request;
-    FirebaseRecyclerAdapter<Request, OrderViewHolder> adapter;
+    FirebaseRecyclerAdapter<Request, RequestViewHolder> adapter;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -45,51 +45,51 @@ public class OrderList extends AppCompatActivity {
                         .build()
         );
 
-        setContentView(R.layout.activity_order_list);
+        setContentView(R.layout.activity_request_list);
 
-        rcvOrder = findViewById(R.id.rcvOrder);
+        rcvRequest = findViewById(R.id.rcvRequest);
 
         database = FirebaseDatabase.getInstance();
         request = database.getReference("Request");
 
-        rcvOrder.setHasFixedSize(true);
+        rcvRequest.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
-        rcvOrder.setLayoutManager(layoutManager);
+        rcvRequest.setLayoutManager(layoutManager);
 
         // getIntent != null : Có String Extra
         if(getIntent() == null){    // Start Order Activity when click Order on Menu Navigation
-            loadOrder(Global.activeUser.getPhone());
+            loadRequest(Global.activeUser.getPhone());
         }
         else {  // Start Order Activity when click notification of order status
-            loadOrder(getIntent().getStringExtra("phone"));
+            loadRequest(getIntent().getStringExtra("phone"));
         }
     }
 
-    private void loadOrder(final String phone) {
+    private void loadRequest(final String phone) {
         Query query = request.orderByChild("phone").equalTo(phone);
 
         FirebaseRecyclerOptions<Request> options = new FirebaseRecyclerOptions.Builder<Request>()
                 .setQuery(query, Request.class).build();
 
-        adapter = new FirebaseRecyclerAdapter<Request, OrderViewHolder>(options) {
+        adapter = new FirebaseRecyclerAdapter<Request, RequestViewHolder>(options) {
             @Override
-            public OrderViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            public RequestViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_order, parent, false);
+                        .inflate(R.layout.item_request, parent, false);
 
-                return new OrderViewHolder(view);
+                return new RequestViewHolder(view);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull OrderViewHolder holder, int position, @NonNull Request model) {
-                holder.id_order.setText(adapter.getRef(position).getKey());
-                holder.phone_order.setText(model.getPhone());
-                holder.address_order.setText(model.getAddress());
-                holder.status_order.setText(Global.convertCodeToStatus(model.getStatus()));
+            protected void onBindViewHolder(@NonNull RequestViewHolder holder, int position, @NonNull Request model) {
+                holder.id_request.setText(adapter.getRef(position).getKey());
+                holder.phone_request.setText(model.getPhone());
+                holder.address_request.setText(model.getAddress());
+                holder.status_request.setText(Global.convertCodeToStatus(model.getStatus()));
             }
         };
 
         adapter.startListening();
-        rcvOrder.setAdapter(adapter);
+        rcvRequest.setAdapter(adapter);
     }
 }

@@ -6,18 +6,18 @@ import android.widget.TextView;
 import pht.eatit.R;
 import pht.eatit.onclick.ItemClickListener;
 
-public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class RequestViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    public TextView id_order, phone_order, address_order, status_order;
+    public TextView id_request, phone_request, address_request, status_request;
 
     private ItemClickListener itemClickListener;
 
-    public OrderViewHolder(View view) {
+    public RequestViewHolder(View view) {
         super(view);
-        id_order = view.findViewById(R.id.id_order);
-        phone_order = view.findViewById(R.id.phone_order);
-        address_order = view.findViewById(R.id.address_order);
-        status_order = view.findViewById(R.id.status_order);
+        id_request = view.findViewById(R.id.id_request);
+        phone_request = view.findViewById(R.id.phone_request);
+        address_request = view.findViewById(R.id.address_request);
+        status_request = view.findViewById(R.id.status_request);
 
         view.setOnClickListener(this);
     }

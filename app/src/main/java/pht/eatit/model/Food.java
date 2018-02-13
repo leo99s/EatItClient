@@ -1,65 +1,65 @@
 package pht.eatit.model;
 
 public class Food {
-    private String Category_ID, Name, Image, Description, Price, Discount;
+    private String category_id, name, image, description, price, discount;
 
     public Food() {
     }
 
-    public Food(String category_ID, String name, String image, String description, String price, String discount) {
-        Category_ID = category_ID;
-        Name = name;
-        Image = image;
-        Description = description;
-        Price = price;
-        Discount = discount;
+    public Food(String category_id, String name, String image, String description, String price, String discount) {
+        this.category_id = category_id;
+        this.name = name;
+        this.image = image;
+        this.description = description;
+        this.price = price;
+        this.discount = discount;
     }
 
     public String getCategory_ID() {
-        return Category_ID;
+        return category_id;
     }
 
-    public void setCategory_ID(String category_ID) {
-        Category_ID = category_ID;
+    public void setCategory_ID(String category_id) {
+        this.category_id = category_id;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getImage() {
-        return Image;
+        return image;
     }
 
     public void setImage(String image) {
-        Image = image;
+        this.image = image;
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 
     public String getPrice() {
-        return Price;
+        return price;
     }
 
     public void setPrice(String price) {
-        Price = price;
+        this.price = price;
     }
 
     public String getDiscount() {
-        return Discount;
+        return discount;
     }
 
     public void setDiscount(String discount) {
-        Discount = discount;
+        this.discount = discount;
     }
 }

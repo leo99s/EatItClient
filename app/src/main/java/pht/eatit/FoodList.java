@@ -366,7 +366,7 @@ public class FoodList extends AppCompatActivity {
                 holder.image_cart.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new Database(getBaseContext()).addToCart(new Order(
+                        new Database(getBaseContext()).addOrder(new Order(
                                 adapter.getRef(position).getKey(),
                                 model.getName(),
                                 model.getPrice(),

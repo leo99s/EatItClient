@@ -10,10 +10,8 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-
 import java.util.Random;
-
-import pht.eatit.OrderList;
+import pht.eatit.RequestList;
 import pht.eatit.R;
 import pht.eatit.Welcome;
 import pht.eatit.global.Global;
@@ -35,7 +33,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         String title = notification.getTitle();
         String body = notification.getBody();
 
-        Intent orderList = new Intent(this, OrderList.class);
+        Intent orderList = new Intent(this, RequestList.class);
         orderList.putExtra("phone", Global.activeUser.getPhone());
         orderList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, orderList, PendingIntent.FLAG_ONE_SHOT);
@@ -56,7 +54,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
     private void sendNotification(RemoteMessage remoteMessage) {
         RemoteMessage.Notification notification = remoteMessage.getNotification();
-        Intent orderList = new Intent(this, OrderList.class);
+        Intent orderList = new Intent(this, RequestList.class);
         orderList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, orderList, PendingIntent.FLAG_ONE_SHOT);
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

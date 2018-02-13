@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context="pht.eatit.OrderList">
+    tools:context="pht.eatit.RequestList">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rcvOrder"
+        android:id="@+id/rcvRequest"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent">

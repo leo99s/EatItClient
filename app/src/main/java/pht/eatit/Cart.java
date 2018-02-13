@@ -31,8 +31,6 @@ import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.rey.material.widget.EditText;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.math.BigDecimal;
@@ -51,7 +49,7 @@ import pht.eatit.model.Response;
 import pht.eatit.model.Sender;
 import pht.eatit.model.Token;
 import pht.eatit.remote.APIService;
-import pht.eatit.viewholder.CartAdapter;
+import pht.eatit.viewholder.OrderAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -69,7 +67,7 @@ public class Cart extends AppCompatActivity {
     DatabaseReference request;
 
     List<Order> orderList = new ArrayList<>();
-    CartAdapter adapter;
+    OrderAdapter adapter;
 
     APIService mService;
 
@@ -117,7 +115,7 @@ public class Cart extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         request = database.getReference("Request");
 
-        loadCart();
+        loadOrder();
 
         btnOrder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,7 +137,7 @@ public class Cart extends AppCompatActivity {
         alert.setMessage("Enter your address :");
 
         LayoutInflater inflater = this.getLayoutInflater();
-        View comment_order = inflater.inflate(R.layout.comment_order, null);
+        View comment_order = inflater.inflate(R.layout.place_order, null);
 
         final PlaceAutocompleteFragment edtAddress = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.edtAddress);
         final MaterialEditText edtComment = comment_order.findViewById(R.id.edtComment);
@@ -266,7 +264,7 @@ public class Cart extends AppCompatActivity {
                     Token serverToken = childDataSnapshot.getValue(Token.class);
 
                     // Create raw payload to send
-                    Notification notification = new Notification("Hoàng Tâm", "You have a new order " + id_order);
+                    Notification notification = new Notification("Hoàng Tâm", "You have a new order : " + id_order);
                     Sender content = new Sender(serverToken.getToken(), notification);
                     mService.sendNotification(content)
                             .enqueue(new Callback<Response>() {
@@ -299,9 +297,9 @@ public class Cart extends AppCompatActivity {
         });
     }
 
-    private void loadCart() {
+    private void loadOrder() {
         orderList = new Database(this).loadOrder();
-        adapter = new CartAdapter(this, orderList);
+        adapter = new OrderAdapter(this, orderList);
         adapter.notifyDataSetChanged();
         rcvCart.setAdapter(adapter);
 
@@ -331,9 +329,9 @@ public class Cart extends AppCompatActivity {
         new Database(this).clearCart();
         
         for (Order order : orderList){
-            new Database(this).addToCart(order);
+            new Database(this).addOrder(order);
         }
-        
-        loadCart();
+
+        loadOrder();
     }
 }

@@ -2,74 +2,75 @@ package pht.eatit.model;
 
 public class Order {
 
-    private int ID;
-    private String Food_ID, Name, Price, Quantity, Discount;
+    private int id;
+    private String food_id, name, price, quantity, discount;
 
     public Order() {
     }
 
-    public Order(int ID, String food_ID, String name, String price, String quantity, String discount) {
-        this.ID = ID;
-        Food_ID = food_ID;
-        Name = name;
-        Price = price;
-        Quantity = quantity;
-        Discount = discount;
+    public Order(int id, String food_id, String name, String price, String quantity, String discount) {
+        this.id = id;
+        this.food_id = food_id;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.discount = discount;
     }
 
-    public Order(String food_ID, String name, String price, String quantity, String discount) {
-        Food_ID = food_ID;
-        Name = name;
-        Price = price;
-        Quantity = quantity;
-        Discount = discount;
+    public Order(String food_id, String name, String price, String quantity, String discount) {
+        this.id = id;
+        this.food_id = food_id;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.discount = discount;
     }
 
     public int getID() {
-        return ID;
+        return id;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setID(int id) {
+        this.id = id;
     }
 
     public String getFood_ID() {
-        return Food_ID;
+        return food_id;
     }
 
-    public void setFood_ID(String food_ID) {
-        Food_ID = food_ID;
+    public void setFood_ID(String food_id) {
+        this.food_id = food_id;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getPrice() {
-        return Price;
+        return price;
     }
 
     public void setPrice(String price) {
-        Price = price;
+        this.price = price;
     }
 
     public String getQuantity() {
-        return Quantity;
+        return quantity;
     }
 
     public void setQuantity(String quantity) {
-        Quantity = quantity;
+        this.quantity = quantity;
     }
 
     public String getDiscount() {
-        return Discount;
+        return discount;
     }
 
     public void setDiscount(String discount) {
-        Discount = discount;
+        this.discount = discount;
     }
 }

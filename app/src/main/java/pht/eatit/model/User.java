@@ -2,55 +2,55 @@ package pht.eatit.model;
 
 public class User {
 
-    private String Phone, Name, Password, Admin, SecureCode;
+    private String phone, name, password, admin, secureCode;
 
     public User() {
     }
 
     public User(String name, String password, String secureCode) {
-        Name = name;
-        Password = password;
-        Admin = "false";
-        SecureCode = secureCode;
+        this.name = name;
+        this.password = password;
+        this.admin = "false";
+        this.secureCode = secureCode;
     }
 
     public String getPhone() {
-        return Phone;
+        return phone;
     }
 
     public void setPhone(String phone) {
-        Phone = phone;
+        this.phone = phone;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 
     public String getAdmin() {
-        return Admin;
+        return admin;
     }
 
     public void setAdmin(String admin) {
-        Admin = admin;
+        this.admin = admin;
     }
 
     public String getSecureCode() {
-        return SecureCode;
+        return secureCode;
     }
 
     public void setSecureCode(String secureCode) {
-        SecureCode = secureCode;
+        this.secureCode = secureCode;
     }
 }

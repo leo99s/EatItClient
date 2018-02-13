@@ -18,7 +18,7 @@ import pht.eatit.global.Global;
 import pht.eatit.model.Order;
 import pht.eatit.onclick.ItemClickListener;
 
-class CartViewHolder extends RecyclerView.ViewHolder implements
+class OrderViewHolder extends RecyclerView.ViewHolder implements
         View.OnClickListener,
         View.OnCreateContextMenuListener {
 
@@ -27,7 +27,7 @@ class CartViewHolder extends RecyclerView.ViewHolder implements
 
     private ItemClickListener itemClickListener;
 
-    public CartViewHolder(View view) {
+    public OrderViewHolder(View view) {
         super(view);
         name_food = view.findViewById(R.id.name_food);
         price_food = view.findViewById(R.id.price_food);
@@ -52,25 +52,25 @@ class CartViewHolder extends RecyclerView.ViewHolder implements
     }
 }
 
-public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
+public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder> {
 
     private Cart cart;
     private List<Order> orderList = new ArrayList<>();
 
-    public CartAdapter(Cart cart, List<Order> orderList) {
+    public OrderAdapter(Cart cart, List<Order> orderList) {
         this.cart = cart;
         this.orderList = orderList;
     }
 
     @Override
-    public CartViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public OrderViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(cart);
-        View view = inflater.inflate(R.layout.item_cart, parent, false);
-        return new CartViewHolder(view);
+        View view = inflater.inflate(R.layout.item_order, parent, false);
+        return new OrderViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final CartViewHolder holder, final int position) {
+    public void onBindViewHolder(final OrderViewHolder holder, final int position) {
         holder.name_food.setText(orderList.get(position).getName());
 
         Locale locale = new Locale("en", "US");
