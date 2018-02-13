@@ -13,14 +13,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.app.ActivityCompat;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -43,6 +45,8 @@ import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.math.BigDecimal;
@@ -60,7 +64,8 @@ import pht.eatit.model.Request;
 import pht.eatit.model.Response;
 import pht.eatit.model.Sender;
 import pht.eatit.model.Token;
-import pht.eatit.remote.APIService;
+import pht.eatit.remote.FCMService;
+import pht.eatit.remote.MapService;
 import pht.eatit.viewholder.OrderAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -86,7 +91,8 @@ public class Cart extends AppCompatActivity implements
     List<Order> orderList = new ArrayList<>();
     OrderAdapter adapter;
 
-    APIService mService;
+    FCMService mFCMService;
+    MapService mMapService;
 
     Place orderPlace;
 
@@ -146,7 +152,8 @@ public class Cart extends AppCompatActivity implements
         paypal.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         startService(paypal);
 
-        mService = Global.getFCMService();
+        mFCMService = Global.getFCMAPI();
+        mMapService = Global.getMapAPI();
 
         total_price = findViewById(R.id.total_price);
         btnOrder = findViewById(R.id.btnOrder);
@@ -276,10 +283,12 @@ public class Cart extends AppCompatActivity implements
         alert.setMessage("Enter your address :");
 
         LayoutInflater inflater = this.getLayoutInflater();
-        View comment_order = inflater.inflate(R.layout.place_order, null);
+        View place_order = inflater.inflate(R.layout.place_order, null);
 
         final PlaceAutocompleteFragment edtAddress = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.edtAddress);
-        final MaterialEditText edtComment = comment_order.findViewById(R.id.edtComment);
+        final MaterialEditText edtComment = place_order.findViewById(R.id.edtComment);
+        final RadioButton rdiLocation = place_order.findViewById(R.id.rdiLocation);
+        final RadioButton rdiAddress = place_order.findViewById(R.id.rdiAddress);
 
         // Hide search icon before fragment
         edtAddress.getView().findViewById(R.id.place_autocomplete_search_button).setVisibility(View.GONE);
@@ -305,13 +314,61 @@ public class Cart extends AppCompatActivity implements
             }
         });
 
-        alert.setView(comment_order);
+        rdiLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    mMapService.getAddress(String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=false",
+                            mLastLocation.getLatitude(),
+                            mLastLocation.getLongitude())).enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                            // If fetch API successfully
+                            try {
+                                JSONObject object = new JSONObject(response.body().toString());
+                                JSONArray result = object.getJSONArray("results");
+                                address = result.getJSONObject(0).getString("formatted_address");
+                                ((android.widget.EditText) edtAddress.getView().findViewById(R.id.place_autocomplete_search_input))
+                                        .setText(address);
+                            } catch (JSONException e) {
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            Toast.makeText(Cart.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+
+        alert.setView(place_order);
 
         alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
-                // Show PayPal
-                address = orderPlace.getAddress().toString();
+                if(!rdiLocation.isChecked() && !rdiAddress.isChecked()){
+                    if(orderPlace != null){
+                        address = orderPlace.getAddress().toString();
+                    } else {
+                        Toast.makeText(Cart.this, "Please enter your address !", Toast.LENGTH_SHORT).show();
+
+                        // Remove fragment
+                        getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.edtAddress)).commit();
+                        return;
+                    }
+                }
+
+                if(!TextUtils.isEmpty(address)){
+                    Toast.makeText(Cart.this, "Please enter your address !", Toast.LENGTH_SHORT).show();
+
+                    // Remove fragment
+                    getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.edtAddress)).commit();
+                    return;
+                }
+
                 comment = edtComment.getText().toString();
                 String fmtPrice = total_price.getText().toString()
                         .replace("$", "")
@@ -405,7 +462,7 @@ public class Cart extends AppCompatActivity implements
                     // Create raw payload to send
                     Notification notification = new Notification("Hoàng Tâm", "You have a new order : " + id_order);
                     Sender content = new Sender(serverToken.getToken(), notification);
-                    mService.sendNotification(content)
+                    mFCMService.sendNotification(content)
                             .enqueue(new Callback<Response>() {
                                 @Override
                                 public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
