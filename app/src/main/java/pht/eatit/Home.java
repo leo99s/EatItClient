@@ -271,8 +271,8 @@ public class Home extends AppCompatActivity
             Intent cart = new Intent(Home.this, Cart.class);
             startActivity(cart);
         } else if (id == R.id.nav_order) {
-            Intent orderList = new Intent(Home.this, RequestList.class);
-            startActivity(orderList);
+            Intent requestList = new Intent(Home.this, RequestList.class);
+            startActivity(requestList);
         } else if(id == R.id.nav_pass){
             showPassDialog();
         } else if (id == R.id.nav_sign_out) {
