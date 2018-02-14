@@ -45,7 +45,6 @@ import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

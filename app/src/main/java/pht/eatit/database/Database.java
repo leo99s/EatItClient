@@ -48,7 +48,7 @@ public class Database extends SQLiteAssetHelper {
     public void addOrder(Order order){
         SQLiteDatabase database = getReadableDatabase();
         String query = String.format("INSERT INTO OrderDetail(food_id, name, price, quantity, discount) VALUES('%s', '%s', '%s', '%s', '%s');",
-                order.getFood_ID(),
+                order.getFood_id(),
                 order.getName(),
                 order.getPrice(),
                 order.getQuantity(),
@@ -110,7 +110,7 @@ public class Database extends SQLiteAssetHelper {
 
     public void updateOrder(Order order) {
         SQLiteDatabase database = getReadableDatabase();
-        String query = String.format("UPDATE OrderDetail SET Quantity = %s WHERE id = %d", order.getQuantity(), order.getID());
+        String query = String.format("UPDATE OrderDetail SET Quantity = %s WHERE id = %d", order.getQuantity(), order.getId());
         database.execSQL(query);
     }
 }

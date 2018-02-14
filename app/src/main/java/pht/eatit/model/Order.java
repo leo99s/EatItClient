@@ -26,19 +26,19 @@ public class Order {
         this.discount = discount;
     }
 
-    public int getID() {
+    public int getId() {
         return id;
     }
 
-    public void setID(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getFood_ID() {
+    public String getFood_id() {
         return food_id;
     }
 
-    public void setFood_ID(String food_id) {
+    public void setFood_id(String food_id) {
         this.food_id = food_id;
     }
 
