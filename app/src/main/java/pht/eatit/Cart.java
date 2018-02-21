@@ -132,6 +132,9 @@ public class Cart extends AppCompatActivity implements
 
         setContentView(R.layout.activity_cart);
 
+        mFCMService = Global.getFCMAPI();
+        mMapService = Global.getMapAPI();
+
         // Runtime permission
         if(ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
@@ -150,9 +153,6 @@ public class Cart extends AppCompatActivity implements
         Intent paypal = new Intent(this, PayPalService.class);
         paypal.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         startService(paypal);
-
-        mFCMService = Global.getFCMAPI();
-        mMapService = Global.getMapAPI();
 
         total_price = findViewById(R.id.total_price);
         btnOrder = findViewById(R.id.btnOrder);
@@ -319,25 +319,26 @@ public class Cart extends AppCompatActivity implements
                 if(isChecked){
                     mMapService.getAddress(String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=false",
                             mLastLocation.getLatitude(),
-                            mLastLocation.getLongitude())).enqueue(new Callback<String>() {
-                        @Override
-                        public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-                            // If fetch API successfully
-                            try {
-                                JSONObject object = new JSONObject(response.body().toString());
-                                JSONArray result = object.getJSONArray("results");
-                                address = result.getJSONObject(0).getString("formatted_address");
-                                ((android.widget.EditText) edtAddress.getView().findViewById(R.id.place_autocomplete_search_input))
-                                        .setText(address);
-                            } catch (JSONException e) {
+                            mLastLocation.getLongitude()))
+                            .enqueue(new Callback<String>() {
+                                @Override
+                                public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                                    // If fetch API successfully
+                                    try {
+                                        JSONObject object = new JSONObject(response.body().toString());
+                                        JSONArray result = object.getJSONArray("results");
+                                        address = result.getJSONObject(0).getString("formatted_address");
+                                        ((android.widget.EditText) edtAddress.getView().findViewById(R.id.place_autocomplete_search_input))
+                                                .setText(address);
+                                    } catch (JSONException e) {
 
-                            }
-                        }
+                                    }
+                                }
 
-                        @Override
-                        public void onFailure(Call<String> call, Throwable t) {
-                            Toast.makeText(Cart.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                                @Override
+                                public void onFailure(Call<String> call, Throwable t) {
+                                    Toast.makeText(Cart.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
                     });
                 }
             }
