@@ -5,12 +5,15 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import com.squareup.picasso.Picasso;
 import pht.eatit.Cart;
 import pht.eatit.R;
 import pht.eatit.database.Database;
@@ -22,6 +25,7 @@ class OrderViewHolder extends RecyclerView.ViewHolder implements
         View.OnClickListener,
         View.OnCreateContextMenuListener {
 
+    public ImageView image_food;
     public TextView name_food, price_food;
     public ElegantNumberButton quantity_food;
 
@@ -29,6 +33,7 @@ class OrderViewHolder extends RecyclerView.ViewHolder implements
 
     public OrderViewHolder(View view) {
         super(view);
+        image_food = view.findViewById(R.id.image_food);
         name_food = view.findViewById(R.id.name_food);
         price_food = view.findViewById(R.id.price_food);
         quantity_food = view.findViewById(R.id.quantity_food);
@@ -71,6 +76,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder> {
 
     @Override
     public void onBindViewHolder(final OrderViewHolder holder, final int position) {
+        Picasso.with(cart).load(orderList
+                .get(position)
+                .getImage())
+                .resize(70, 70)
+                .centerCrop()
+                .into(holder.image_food);
+
         holder.name_food.setText(orderList.get(position).getName());
 
         Locale locale = new Locale("en", "US");

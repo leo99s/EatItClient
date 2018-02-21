@@ -360,7 +360,7 @@ public class Cart extends AppCompatActivity implements
                     }
                 }
 
-                if(!TextUtils.isEmpty(address)){
+                if(TextUtils.isEmpty(address)){
                     Toast.makeText(Cart.this, "Please enter your address !", Toast.LENGTH_SHORT).show();
 
                     // Remove fragment

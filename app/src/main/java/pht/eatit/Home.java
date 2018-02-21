@@ -121,7 +121,7 @@ public class Home extends AppCompatActivity
         };
 
         fab = findViewById(R.id.fab);
-        fab.setCount(new Database(this).getCartCount());
+        //fab.setCount(new Database(this).getCartCount());
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

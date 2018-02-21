@@ -11,7 +11,7 @@ import pht.eatit.model.Order;
 
 public class Database extends SQLiteAssetHelper {
 
-    private static final String DB_NAME = "EatIt_DB.db";
+    private static final String DB_NAME = "EatIt.db";
     private static final int DB_VERSION = 1;
 
     public Database(Context context) {
@@ -25,7 +25,7 @@ public class Database extends SQLiteAssetHelper {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
         String table = "OrderDetail";
-        String[] column = { "id", "food_id", "name", "price", "quantity", "discount" };
+        String[] column = { "id", "food_id", "image", "name", "price", "quantity", "discount" };
 
         queryBuilder.setTables(table);
         Cursor cursor = queryBuilder.query(database, column, null, null, null, null, null);
@@ -35,6 +35,7 @@ public class Database extends SQLiteAssetHelper {
                 orderList.add(new Order(
                         cursor.getInt(cursor.getColumnIndex("id")),
                         cursor.getString(cursor.getColumnIndex("food_id")),
+                        cursor.getString(cursor.getColumnIndex("image")),
                         cursor.getString(cursor.getColumnIndex("name")),
                         cursor.getString(cursor.getColumnIndex("price")),
                         cursor.getString(cursor.getColumnIndex("quantity")),
@@ -47,8 +48,9 @@ public class Database extends SQLiteAssetHelper {
 
     public void addOrder(Order order){
         SQLiteDatabase database = getReadableDatabase();
-        String query = String.format("INSERT INTO OrderDetail(food_id, name, price, quantity, discount) VALUES('%s', '%s', '%s', '%s', '%s');",
+        String query = String.format("INSERT INTO OrderDetail(food_id, image, name, price, quantity, discount) VALUES('%s', '%s', '%s', '%s', '%s', '%s');",
                 order.getFood_id(),
+                order.getImage(),
                 order.getName(),
                 order.getPrice(),
                 order.getQuantity(),
@@ -59,7 +61,7 @@ public class Database extends SQLiteAssetHelper {
 
     public void clearCart(){
         SQLiteDatabase database = getReadableDatabase();
-        String query = String.format("DELETE FROM OrderDetail");
+        String query = String.format("DELETE FROM OrderDetail;");
         database.execSQL(query);
     }
 
@@ -95,7 +97,7 @@ public class Database extends SQLiteAssetHelper {
     public int getCartCount() {
         int count = 0;
         SQLiteDatabase database = getReadableDatabase();
-        String query = String.format("SELECT COUNT(*) FROM OrderDetail");
+        String query = String.format("SELECT COUNT (*) FROM OrderDetail;");
         Cursor cursor = database.rawQuery(query, null);
 
         if(cursor.moveToFirst()){

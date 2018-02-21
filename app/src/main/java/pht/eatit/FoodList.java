@@ -368,6 +368,7 @@ public class FoodList extends AppCompatActivity {
                     public void onClick(View v) {
                         new Database(getBaseContext()).addOrder(new Order(
                                 adapter.getRef(position).getKey(),
+                                model.getImage(),
                                 model.getName(),
                                 model.getPrice(),
                                 "1",
