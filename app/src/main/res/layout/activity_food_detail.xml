@@ -63,7 +63,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/ic_comment"
-        android:layout_marginRight="60dp"
+        android:layout_marginRight="55dp"
         app:backgroundTint="@android:color/white"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp"
