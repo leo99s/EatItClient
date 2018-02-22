@@ -344,6 +344,22 @@ public class Cart extends AppCompatActivity implements
             }
         });
 
+        rdiAddress.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    if(Global.activeUser.getAddress() != null
+                            || !TextUtils.isEmpty(Global.activeUser.getAddress())){
+                        address = Global.activeUser.getAddress();
+                        ((android.widget.EditText) edtAddress.getView().findViewById(R.id.place_autocomplete_search_input))
+                                .setText(address);
+                    } else {
+                        Toast.makeText(Cart.this, "Please update your address !", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
         alert.setView(place_order);
 
         alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {

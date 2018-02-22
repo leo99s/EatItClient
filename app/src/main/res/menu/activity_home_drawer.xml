@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
@@ -21,6 +22,12 @@
             android:icon="@drawable/ic_access_time"
             android:iconTint="@android:color/white"
             android:title="Orders" />
+
+        <item
+            android:id="@+id/nav_address"
+            android:icon="@drawable/ic_home"
+            android:iconTint="@android:color/white"
+            android:title="Address" />
 
         <item
             android:id="@+id/nav_pass"

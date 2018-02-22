@@ -2,7 +2,7 @@ package pht.eatit.model;
 
 public class User {
 
-    private String phone, name, password, admin, secureCode;
+    private String phone, name, password, admin, secureCode, address;
 
     public User() {
     }
@@ -52,5 +52,13 @@ public class User {
 
     public void setSecureCode(String secureCode) {
         this.secureCode = secureCode;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

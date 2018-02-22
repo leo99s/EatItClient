@@ -273,6 +273,8 @@ public class Home extends AppCompatActivity
         } else if (id == R.id.nav_order) {
             Intent requestList = new Intent(Home.this, RequestList.class);
             startActivity(requestList);
+        } else if(id == R.id.nav_address){
+            showAddressDialog();
         } else if(id == R.id.nav_pass){
             showPassDialog();
         } else if (id == R.id.nav_sign_out) {
@@ -287,6 +289,47 @@ public class Home extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showAddressDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(Home.this);
+        alert.setTitle("Change home address");
+        alert.setMessage("Please fill all info :");
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View home_address = inflater.inflate(R.layout.home_address, null);
+
+        final MaterialEditText edtAddress = home_address.findViewById(R.id.edtAddress);
+
+        alert.setView(home_address);
+
+        alert.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                dialog.dismiss();
+
+                Global.activeUser.setAddress(edtAddress.getText().toString());
+
+                database.getReference("User")
+                        .child(Global.activeUser.getPhone())
+                        .setValue(Global.activeUser)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(Home.this, "Update home address successfully !", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
+
+        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
     }
 
     private void showPassDialog() {
