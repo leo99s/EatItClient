@@ -1,15 +1,15 @@
 <resources>
-    <string name="app_name">Eat It</string>
-    <string name="slogan">No matter where you are : Whether you are at home,\nor in the office, or on the beach.\nWe will find and feed you !</string>
-    <string name="title_activity_home">Home</string>
+	<string name="app_name">Eat It</string>
+	<string name="slogan">No matter where you are : Whether you are at home,\nor in the office, or on the beach.\nWe will find and feed you !</string>
+	<string name="title_activity_home">Home</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+	<string name="navigation_drawer_open">Open navigation drawer</string>
+	<string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+	<string name="action_settings">Settings</string>
 
-    <string name="forgot_pass"><u>Forgot password ?</u></string>
+	<string name="forgot_pass"><u>Forgot password ?</u></string>
 
-    <string name="facebook_id">2018087665070713</string>
-    <string name="facebook_login_protocol">fb2018087665070713</string>
+	<string name="facebook_id">2018087665070713</string>
+	<string name="facebook_login_protocol">fb2018087665070713</string>
 </resources>

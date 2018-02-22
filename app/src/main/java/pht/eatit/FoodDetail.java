@@ -1,6 +1,8 @@
 package pht.eatit;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +15,8 @@ import android.widget.Toast;
 
 import com.andremion.counterfab.CounterFab;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +27,8 @@ import com.squareup.picasso.Picasso;
 import com.stepstone.apprating.AppRatingDialog;
 import com.stepstone.apprating.listener.RatingDialogListener;
 import java.util.Arrays;
+
+import info.hoang8f.widget.FButton;
 import pht.eatit.database.Database;
 import pht.eatit.global.Global;
 import pht.eatit.model.Food;
@@ -42,6 +48,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
     CounterFab btnAdd;
     ElegantNumberButton btnQuantity;
     RatingBar rating_bar;
+    FButton btnShowComment;
 
     FirebaseDatabase database;
     DatabaseReference food;
@@ -75,6 +82,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
         btnAdd = findViewById(R.id.btnAdd);
         btnQuantity = findViewById(R.id.btnQuantity);
         rating_bar = findViewById(R.id.rating_bar);
+        btnShowComment = findViewById(R.id.btnShowComment);
 
         collapsing_toolbar.setCollapsedTitleTextAppearance(R.style.collapsedApBar);
         collapsing_toolbar.setExpandedTitleTextAppearance(R.style.expandedApBar);
@@ -107,6 +115,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
         });
 
         btnAdd.setCount(new Database(this).getCartCount());
+
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,6 +129,16 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                 ));
 
                 Toast.makeText(FoodDetail.this, "Added to your cart !", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnShowComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent comment = new Intent(FoodDetail.this, Comment.class);
+                comment.putExtra("food_id", food_id);
+                startActivity(comment);
+                finish();
             }
         });
     }
@@ -156,7 +175,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                 .setPositiveButtonText("Submit")
                 .setNegativeButtonText("Cancel")
                 .setNoteDescriptions(Arrays.asList("Very Bad", "Not Good", "Quite OK", "Very Good", "Excellent"))
-                .setDefaultRating(5)
+                .setDefaultRating(3)
                 .setTitle("Rate this food")
                 .setDescription("Please select some stars and give your feedback")
                 .setTitleTextColor(R.color.colorPrimary)
@@ -198,8 +217,16 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                 String.valueOf(star),
                 comment
         );
+
+        // User can rate multiple times
+        rating.push().setValue(child).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(FoodDetail.this, "Thanks for your feedback !", Toast.LENGTH_SHORT).show();
+            }
+        });
         
-        rating.child(Global.activeUser.getPhone()).addValueEventListener(new ValueEventListener() {
+        /*rating.child(Global.activeUser.getPhone()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.child(Global.activeUser.getPhone()).exists()){
@@ -221,7 +248,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
     }
 
     @Override
