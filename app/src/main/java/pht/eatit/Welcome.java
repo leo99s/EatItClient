@@ -1,5 +1,6 @@
 package pht.eatit;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -15,6 +17,16 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.facebook.FacebookSdk;
+import com.facebook.accountkit.Account;
+import com.facebook.accountkit.AccountKit;
+import com.facebook.accountkit.AccountKitCallback;
+import com.facebook.accountkit.AccountKitError;
+import com.facebook.accountkit.AccountKitLoginResult;
+import com.facebook.accountkit.ui.AccountKitActivity;
+import com.facebook.accountkit.ui.AccountKitConfiguration;
+import com.facebook.accountkit.ui.LoginType;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,6 +34,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import dmax.dialog.SpotsDialog;
 import info.hoang8f.widget.FButton;
 import io.paperdb.Paper;
 import pht.eatit.global.Global;
@@ -32,7 +46,12 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class Welcome extends AppCompatActivity {
 
     TextView txtSlogan;
-    FButton btnSignIn, btnSignUp;
+    FButton btnContinue;
+
+    FirebaseDatabase database;
+    DatabaseReference user;
+
+    private static final int ACCOUNT_KIT_REQUEST_CODE = 7171;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -51,43 +70,64 @@ public class Welcome extends AppCompatActivity {
         );
 
         FacebookSdk.sdkInitialize(getApplicationContext());
+        AccountKit.initialize(this);
+
         setContentView(R.layout.activity_welcome);
 
         printKeyHash();
 
+        database = FirebaseDatabase.getInstance();
+        user = database.getReference("User");
+
         txtSlogan = findViewById(R.id.txtSlogan);
-        btnSignIn = findViewById(R.id.btnSignIn);
-        btnSignUp = findViewById(R.id.btnSignUp);
+        btnContinue = findViewById(R.id.btnContinue);
 
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/nabila.ttf");
         txtSlogan.setTypeface(typeface);
 
-        // Init paper
-        Paper.init(this);
-        String phone = Paper.book().read(Global.PHONE);
-        String password = Paper.book().read(Global.PASSWORD);
-
-        if(phone != null && password != null){
-            if(!phone.isEmpty() && !password.isEmpty()){
-                signIn(phone, password);
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startLoginSystem();
             }
+        });
+
+        // Check session of Facebook Account Kit
+        if(AccountKit.getCurrentAccessToken() != null){
+            // Show dialog for waiting
+            final AlertDialog waitDialog = new SpotsDialog(this);
+            waitDialog.show();
+            waitDialog.setMessage("Please wait...");
+            waitDialog.setCancelable(false);
+
+            AccountKit.getCurrentAccount(new AccountKitCallback<Account>() {
+                @Override
+                public void onSuccess(Account account) {
+                    // Start login
+                    user.child(account.getPhoneNumber().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User child = dataSnapshot.getValue(User.class);
+                            Intent home = new Intent(Welcome.this, Home.class);
+                            Global.activeUser = child;
+                            startActivity(home);
+                            waitDialog.dismiss();
+                            finish();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(AccountKitError accountKitError) {
+
+                }
+            });
         }
-
-        btnSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent signIn = new Intent(Welcome.this, SignIn.class);
-                startActivity(signIn);
-            }
-        });
-
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent signUp = new Intent(Welcome.this, SignUp.class);
-                startActivity(signUp);
-            }
-        });
     }
 
     private void printKeyHash() {
@@ -106,51 +146,113 @@ public class Welcome extends AppCompatActivity {
         }
     }
 
-    private void signIn(final String phone, final String password) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference user = database.getReference("User");
+    private void startLoginSystem() {
+        Intent accountKit = new Intent(Welcome.this, AccountKitActivity.class);
+        AccountKitConfiguration.AccountKitConfigurationBuilder configuration =
+                new AccountKitConfiguration.AccountKitConfigurationBuilder(
+                        LoginType.PHONE,
+                        AccountKitActivity.ResponseType.TOKEN
+                );
+        accountKit.putExtra(AccountKitActivity.ACCOUNT_KIT_ACTIVITY_CONFIGURATION, configuration.build());
+        startActivityForResult(accountKit, ACCOUNT_KIT_REQUEST_CODE);
+    }
 
-        if(Global.isConnectedToInternet(Welcome.this)){
-            final ProgressDialog dialog = new ProgressDialog(Welcome.this);
-            dialog.setMessage("Please wait...");
-            dialog.show();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == ACCOUNT_KIT_REQUEST_CODE){
+            AccountKitLoginResult result = data.getParcelableExtra(AccountKitLoginResult.RESULT_KEY);
 
-            user.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // Check if user existed
-                    if(dataSnapshot.child(phone).exists()){
-                        dialog.dismiss();
+            if(result.getError() != null){
+                Toast.makeText(this, result.getError().getErrorType().getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            } else if(result.wasCancelled()){
+                Toast.makeText(this, "You have canceled !", Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                if(result.getAccessToken() != null){
+                    // Show dialog for waiting
+                    final AlertDialog waitDialog = new SpotsDialog(this);
+                    waitDialog.show();
+                    waitDialog.setMessage("Please wait...");
+                    waitDialog.setCancelable(false);
 
-                        // Get user's values
-                        User child = dataSnapshot.child(phone).getValue(User.class);
-                        child.setPhone(phone);  // Set phone
+                    // Get current phone
+                    AccountKit.getCurrentAccount(new AccountKitCallback<Account>() {
+                        @Override
+                        public void onSuccess(Account account) {
+                            final String phone = account.getPhoneNumber().toString();
 
-                        if(child.getPassword().equals(password)){
-                            Global.activeUser = child;
-                            Intent home = new Intent(Welcome.this, Home.class);
-                            startActivity(home);
-                            finish();
+                            // Check if the phone was existed ?
+                            user.orderByKey().equalTo(phone).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if(!dataSnapshot.child(phone).exists()){
+                                        // Create a new user
+                                        User newUser = new User();
+                                        newUser.setPhone(phone);
+                                        newUser.setName("");
+
+                                        user.child(phone).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()){
+                                                    Toast.makeText(Welcome.this, "You have successfully registered !", Toast.LENGTH_SHORT).show();
+                                                }
+
+                                                // Start login
+                                                user.child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        User child = dataSnapshot.getValue(User.class);
+                                                        Intent home = new Intent(Welcome.this, Home.class);
+                                                        Global.activeUser = child;
+                                                        startActivity(home);
+                                                        waitDialog.dismiss();
+                                                        finish();
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        // Start login
+                                        user.child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                User child = dataSnapshot.getValue(User.class);
+                                                Intent home = new Intent(Welcome.this, Home.class);
+                                                Global.activeUser = child;
+                                                startActivity(home);
+                                                waitDialog.dismiss();
+                                                finish();
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
                         }
-                        else {
-                            Toast.makeText(Welcome.this, "Wrong password !", Toast.LENGTH_SHORT).show();
+
+                        @Override
+                        public void onError(AccountKitError accountKitError) {
+                            Toast.makeText(Welcome.this, accountKitError.getErrorType().getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                    }
-                    else {
-                        dialog.dismiss();
-                        Toast.makeText(Welcome.this, "User doesn't exist !", Toast.LENGTH_SHORT).show();
-                    }
+                    });
                 }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-        else {
-            Toast.makeText(Welcome.this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
-            return;
+            }
         }
     }
 }

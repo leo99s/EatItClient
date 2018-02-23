@@ -9,7 +9,13 @@
             android:id="@+id/nav_category"
             android:icon="@drawable/ic_restaurant"
             android:iconTint="@android:color/white"
-            android:title="Category" />
+            android:title="Home" />
+
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_account_circle"
+            android:iconTint="@android:color/white"
+            android:title="Profile" />
 
         <item
             android:id="@+id/nav_cart"
@@ -22,18 +28,6 @@
             android:icon="@drawable/ic_access_time"
             android:iconTint="@android:color/white"
             android:title="Orders" />
-
-        <item
-            android:id="@+id/nav_address"
-            android:icon="@drawable/ic_home"
-            android:iconTint="@android:color/white"
-            android:title="Address" />
-
-        <item
-            android:id="@+id/nav_pass"
-            android:icon="@drawable/ic_security"
-            android:iconTint="@android:color/white"
-            android:title="Password" />
 
         <item
             android:id="@+id/nav_sign_out"

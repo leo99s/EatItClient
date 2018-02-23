@@ -29,35 +29,15 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <info.hoang8f.widget.FButton
+        android:id="@+id/btnContinue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        android:layout_alignParentBottom="true">
-
-        <info.hoang8f.widget.FButton
-            android:id="@+id/btnSignUp"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="8dp"
-            android:text="Sign Up"
-            android:textColor="@android:color/white"
-            app:fButtonColor="@color/btnSignUp"
-            app:cornerRadius="10dp"/>
-
-        <info.hoang8f.widget.FButton
-            android:id="@+id/btnSignIn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="8dp"
-            android:text="Sign In"
-            android:textColor="@android:color/white"
-            app:fButtonColor="@color/btnSignIn"
-            app:cornerRadius="10dp"/>
-
-    </LinearLayout>
+        android:layout_margin="8dp"
+        android:layout_alignParentBottom="true"
+        android:text="CONTINUE"
+        android:textColor="@android:color/white"
+        app:fButtonColor="@color/btnSignIn"
+        app:cornerRadius="10dp" />
 
 </RelativeLayout>

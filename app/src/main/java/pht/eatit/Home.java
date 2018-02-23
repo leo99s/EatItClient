@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -337,16 +336,14 @@ public class Home extends AppCompatActivity
         if (id == R.id.nav_category) {
             Intent home = new Intent(Home.this, Home.class);
             startActivity(home);
+        } else if(id == R.id.nav_profile){
+            showProfileDialog();
         } else if (id == R.id.nav_cart) {
             Intent cart = new Intent(Home.this, Cart.class);
             startActivity(cart);
         } else if (id == R.id.nav_order) {
             Intent requestList = new Intent(Home.this, RequestList.class);
             startActivity(requestList);
-        } else if(id == R.id.nav_address){
-            showAddressDialog();
-        } else if(id == R.id.nav_pass){
-            showPassDialog();
         } else if (id == R.id.nav_sign_out) {
             // Delete remembered user
             Paper.book().destroy();
@@ -361,98 +358,43 @@ public class Home extends AppCompatActivity
         return true;
     }
 
-    private void showAddressDialog() {
+    private void showProfileDialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(Home.this);
-        alert.setTitle("Change home address");
+        alert.setTitle("Update profile");
         alert.setMessage("Please fill all info :");
 
         LayoutInflater inflater = LayoutInflater.from(this);
-        View home_address = inflater.inflate(R.layout.home_address, null);
+        View update_profile = inflater.inflate(R.layout.update_profile, null);
 
-        final MaterialEditText edtAddress = home_address.findViewById(R.id.edtAddress);
+        final MaterialEditText edtName = update_profile.findViewById(R.id.edtName);
+        final MaterialEditText edtAddress = update_profile.findViewById(R.id.edtAddress);
 
-        alert.setView(home_address);
+        alert.setView(update_profile);
 
         alert.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int i) {
-                dialog.dismiss();
-
-                Global.activeUser.setAddress(edtAddress.getText().toString());
-
-                database.getReference("User")
-                        .child(Global.activeUser.getPhone())
-                        .setValue(Global.activeUser)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(Home.this, "Update home address successfully !", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            }
-        });
-
-        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int i) {
-                dialog.dismiss();
-            }
-        });
-
-        alert.show();
-    }
-
-    private void showPassDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(Home.this);
-        alert.setTitle("Change password");
-        alert.setMessage("Please fill all info :");
-
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View change_password = inflater.inflate(R.layout.change_password, null);
-
-        final MaterialEditText edtOldPass = change_password.findViewById(R.id.edtOldPass);
-        final MaterialEditText edtNewPass1 = change_password.findViewById(R.id.edtNewPass1);
-        final MaterialEditText edtNewPass2 = change_password.findViewById(R.id.edtNewPass2);
-
-        alert.setView(change_password);
-
-        alert.setPositiveButton("CHANGE", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 // Use android.app for SpotsDialog
                 final android.app.AlertDialog waitDialog = new SpotsDialog(Home.this);
                 waitDialog.show();
 
-                if(edtOldPass.getText().toString().equals(Global.activeUser.getPassword())){
-                    if(edtNewPass1.getText().toString().equals(edtNewPass2.getText().toString())){
-                        Map<String, Object> update = new HashMap<>();
-                        update.put("Password", edtNewPass2.getText().toString());
+                // Update profile
+                HashMap<String, Object> object = new HashMap<>();
+                object.put("name", edtName.getText().toString());
+                object.put("address", edtAddress.getText().toString());
 
-                        // Update password
-                        DatabaseReference user = FirebaseDatabase.getInstance().getReference("User");
-                        user.child(Global.activeUser.getPhone())
-                                .updateChildren(update)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        waitDialog.dismiss();
-                                        Toast.makeText(Home.this, "Password was updated !", Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(Home.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    } else {
+                DatabaseReference user = database.getReference("User");
+                user.child(Global.activeUser.getPhone()).updateChildren(object).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
                         waitDialog.dismiss();
-                        Toast.makeText(Home.this, "New password doesn't match !", Toast.LENGTH_SHORT).show();
+
+                        if(task.isSuccessful()){
+                            Global.activeUser.setAddress(edtAddress.getText().toString());
+                            Toast.makeText(Home.this, "Your profile was updated !", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                } else {
-                    waitDialog.dismiss();
-                    Toast.makeText(Home.this, "Wrong old password !", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
 
