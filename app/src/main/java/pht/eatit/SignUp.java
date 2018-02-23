@@ -24,21 +24,8 @@ public class SignUp extends AppCompatActivity {
     FButton btnSignUp;
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        CalligraphyConfig.initDefault(
-                new CalligraphyConfig.Builder()
-                        .setDefaultFontPath("fonts/restaurant.otf")
-                        .setFontAttrId(R.attr.fontPath)
-                        .build()
-        );
-
         setContentView(R.layout.activity_sign_up);
 
         edtPhone = findViewById(R.id.edtPhone);

@@ -142,6 +142,60 @@ public class FoodList extends AppCompatActivity {
                         return;
                     }
                 }
+
+                // Search after getting category_id
+                bar_search.setHint("Enter a food name...");
+                bar_search.setSpeechMode(false);
+                bar_search.setCardViewElevation(10);
+                loadSuggestion();
+                bar_search.setLastSuggestions(suggestedList);
+
+                bar_search.addTextChangeListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        // Changing suggestions when typing
+                        List<String> suggestions = new ArrayList<>();
+
+                        for (String item : suggestedList){
+                            if(item.toLowerCase().contains(bar_search.getText().toLowerCase())){
+                                suggestions.add(item);
+                            }
+                        }
+
+                        bar_search.setLastSuggestions(suggestions);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
+                bar_search.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+                    @Override
+                    public void onSearchStateChanged(boolean enabled) {
+                        // When searching is closed, restore original adapter
+                        if(!enabled){
+                            rcvFood.setAdapter(adapter);
+                        }
+                    }
+
+                    @Override
+                    public void onSearchConfirmed(CharSequence text) {
+                        // When searching is done, show results
+                        search(text);
+                    }
+
+                    @Override
+                    public void onButtonClicked(int buttonCode) {
+
+                    }
+                });
             }
         });
 
@@ -189,60 +243,6 @@ public class FoodList extends AppCompatActivity {
                 return;
             }
         }
-
-        // Search
-        bar_search.setHint("Enter a food name...");
-        bar_search.setSpeechMode(false);
-        bar_search.setCardViewElevation(10);
-        loadSuggestion();
-        bar_search.setLastSuggestions(suggestedList);
-
-        bar_search.addTextChangeListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Changing suggestions when typing
-                List<String> suggestions = new ArrayList<>();
-
-                for (String item : suggestedList){
-                    if(item.toLowerCase().contains(bar_search.getText().toLowerCase())){
-                        suggestions.add(item);
-                    }
-                }
-
-                bar_search.setLastSuggestions(suggestions);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        bar_search.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
-            @Override
-            public void onSearchStateChanged(boolean enabled) {
-                // When searching is closed, restore original adapter
-                if(!enabled){
-                    rcvFood.setAdapter(adapter);
-                }
-            }
-
-            @Override
-            public void onSearchConfirmed(CharSequence text) {
-                // When searching is done, show results
-                search(text);
-            }
-
-            @Override
-            public void onButtonClicked(int buttonCode) {
-
-            }
-        });
     }
 
     @Override
