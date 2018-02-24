@@ -66,9 +66,9 @@ public class Database extends SQLiteAssetHelper {
     }
 
     // Is favorite
-    public boolean isFavorite(String food_id){
+    public boolean isFavorite(String phone, String food_id){
         SQLiteDatabase database = getReadableDatabase();
-        String query = String.format("SELECT * FROM Favorite WHERE food_id = '%s';", food_id);
+        String query = String.format("SELECT * FROM Favorite WHERE phone = '%s' AND food_id = '%s';", phone, food_id);
         Cursor cursor = database.rawQuery(query, null);
 
         if(cursor.getCount() <= 0){
@@ -81,16 +81,16 @@ public class Database extends SQLiteAssetHelper {
     }
 
     // Add to favorite
-    public void addToFavorite(String food_id){
+    public void addToFavorite(String phone, String food_id){
         SQLiteDatabase database = getReadableDatabase();
-        String query = String.format("INSERT INTO Favorite (food_id) VALUES ('%s');", food_id);
+        String query = String.format("INSERT INTO Favorite (phone, food_id) VALUES ('%s', '%s');", phone, food_id);
         database.execSQL(query);
     }
 
     // Delete from favorite
-    public void deleteFromFavorite(String food_id){
+    public void deleteFromFavorite(String phone, String food_id){
         SQLiteDatabase database = getReadableDatabase();
-        String query = String.format("DELETE FROM Favorite WHERE food_id = '%s';", food_id);
+        String query = String.format("DELETE FROM Favorite WHERE phone = '%s' AND food_id = '%s';", phone, food_id);
         database.execSQL(query);
     }
 
