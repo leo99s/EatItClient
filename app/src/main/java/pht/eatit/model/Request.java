@@ -4,21 +4,22 @@ import java.util.List;
 
 public class Request {
 
-    private String phone, name, address, latlng, total, status, comment, payment; // Status (0 : Placed, 1 : Shipping, 2 : Shipped)
+    private String phone, name, address, latlng, message, totalPrice, paymentMethod, paymentStatus, deliveryStatus; // deliveryStatus (0 : Placed, 1 : Shipping, 2 : Shipped)
     private List<Order> orders;
 
     public Request() {
     }
 
-    public Request(String phone, String name, String address, String latlng, String total, String status, String comment, String payment, List<Order> orders) {
+    public Request(String phone, String name, String address, String latlng, String message, String totalPrice, String paymentMethod, String paymentStatus, String deliveryStatus, List<Order> orders) {
         this.phone = phone;
         this.name = name;
         this.address = address;
         this.latlng = latlng;
-        this.total = total;
-        this.status = status;
-        this.comment = comment;
-        this.payment = payment;
+        this.message = message;
+        this.totalPrice = totalPrice;
+        this.paymentMethod = paymentMethod;
+        this.paymentStatus = paymentStatus;
+        this.deliveryStatus = deliveryStatus;
         this.orders = orders;
     }
 
@@ -54,36 +55,44 @@ public class Request {
         this.latlng = latlng;
     }
 
-    public String getTotal() {
-        return total;
+    public String getMessage() {
+        return message;
     }
 
-    public void setTotal(String total) {
-        this.total = total;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public String getStatus() {
-        return status;
+    public String getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setTotalPrice(String totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
-    public String getComment() {
-        return comment;
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
-    public String getPayment() {
-        return payment;
+    public String getPaymentStatus() {
+        return paymentStatus;
     }
 
-    public void setPayment(String payment) {
-        this.payment = payment;
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public String getDeliveryStatus() {
+        return deliveryStatus;
+    }
+
+    public void setDeliveryStatus(String deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
     }
 
     public List<Order> getOrders() {

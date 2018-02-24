@@ -33,6 +33,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -93,13 +94,12 @@ public class Cart extends AppCompatActivity implements
     FCMService mFCMService;
     MapService mMapService;
 
-    Place orderPlace;
-
     static PayPalConfiguration config = new PayPalConfiguration()
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX) // Using SandBox for testing, else ENVIRONMENT_PRODUCTION
             .clientId(Config.PAYPAL_ID);
 
-    String address, comment;
+    String address, message;
+    LatLng latlng;
     private static final int PAYPAL_REQUEST_CODE = 9999;
 
     // Location
@@ -285,9 +285,11 @@ public class Cart extends AppCompatActivity implements
         View place_order = inflater.inflate(R.layout.place_order, null);
 
         final PlaceAutocompleteFragment edtAddress = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.edtAddress);
-        final MaterialEditText edtComment = place_order.findViewById(R.id.edtComment);
+        final MaterialEditText edtMessage = place_order.findViewById(R.id.edtMessage);
         final RadioButton rdiLocation = place_order.findViewById(R.id.rdiLocation);
         final RadioButton rdiAddress = place_order.findViewById(R.id.rdiAddress);
+        final RadioButton rdiCash = place_order.findViewById(R.id.rdiCash);
+        final RadioButton rdiPaypal = place_order.findViewById(R.id.rdiPaypal);
 
         // Hide search icon before fragment
         edtAddress.getView().findViewById(R.id.place_autocomplete_search_button).setVisibility(View.GONE);
@@ -304,7 +306,10 @@ public class Cart extends AppCompatActivity implements
         edtAddress.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                orderPlace = place;
+                rdiLocation.setChecked(false);
+                rdiAddress.setChecked(false);
+                address = place.getAddress().toString();
+                latlng = place.getLatLng();
             }
 
             @Override
@@ -340,6 +345,8 @@ public class Cart extends AppCompatActivity implements
                                     Toast.makeText(Cart.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                     });
+
+                    latlng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 }
             }
         });
@@ -348,11 +355,47 @@ public class Cart extends AppCompatActivity implements
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    if(Global.activeUser.getAddress() != null
-                            || !TextUtils.isEmpty(Global.activeUser.getAddress())){
+                    if(Global.activeUser.getAddress() != null && !TextUtils.isEmpty(Global.activeUser.getAddress())){
                         address = Global.activeUser.getAddress();
+
                         ((android.widget.EditText) edtAddress.getView().findViewById(R.id.place_autocomplete_search_input))
                                 .setText(address);
+
+                        mMapService.getGeoCode(address).enqueue(new Callback<String>() {
+                            @Override
+                            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                                try {
+                                    JSONObject object = new JSONObject(response.body().toString());
+
+                                    if(object.get("status").equals("OK")){
+                                        String lat = ((JSONArray)object.get("results"))
+                                                .getJSONObject(0)
+                                                .getJSONObject("geometry")
+                                                .getJSONObject("location")
+                                                .get("lat").toString();
+
+                                        String lng = ((JSONArray)object.get("results"))
+                                                .getJSONObject(0)
+                                                .getJSONObject("geometry")
+                                                .getJSONObject("location")
+                                                .get("lng").toString();
+
+                                        latlng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+                                    } else {
+                                        Toast.makeText(Cart.this, "Please update your address exactly !", Toast.LENGTH_SHORT).show();
+                                        latlng = new LatLng(90.0, 100.0);  // Default if latlng cannot be defined
+                                    }
+
+                                } catch (JSONException e) {
+
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<String> call, Throwable t) {
+
+                            }
+                        });
                     } else {
                         Toast.makeText(Cart.this, "Please update your address !", Toast.LENGTH_SHORT).show();
                     }
@@ -366,9 +409,7 @@ public class Cart extends AppCompatActivity implements
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 if(!rdiLocation.isChecked() && !rdiAddress.isChecked()){
-                    if(orderPlace != null){
-                        address = orderPlace.getAddress().toString();
-                    } else {
+                    if(address.isEmpty() && latlng == null){
                         Toast.makeText(Cart.this, "Please enter your address !", Toast.LENGTH_SHORT).show();
 
                         // Remove fragment
@@ -385,21 +426,56 @@ public class Cart extends AppCompatActivity implements
                     return;
                 }
 
-                comment = edtComment.getText().toString();
+                message = edtMessage.getText().toString();
+
                 String fmtPrice = total_price.getText().toString()
                         .replace("$", "")
                         .replace(",", "");
 
-                PayPalPayment payment = new PayPalPayment(
-                        new BigDecimal(fmtPrice),
-                        "USD",
-                        "Eat It Order",
-                        PayPalPayment.PAYMENT_INTENT_SALE);
+                // Check payment method
+                if(!rdiCash.isChecked() && !rdiPaypal.isChecked()){
+                    Toast.makeText(Cart.this, "Please select payment method !", Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(getApplicationContext(), PaymentActivity.class);
-                intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
-                intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
-                startActivityForResult(intent, PAYPAL_REQUEST_CODE);
+                    // Remove fragment
+                    getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.edtAddress)).commit();
+                    return;
+                } else if(rdiCash.isChecked()){
+                    // Create new request
+                    Request newRequest = new Request(
+                            Global.activeUser.getPhone(),
+                            Global.activeUser.getName(),
+                            address,
+                            String.format("%s,%s", latlng.latitude, latlng.longitude),
+                            message,
+                            total_price.getText().toString(),
+                            "Cash",
+                            "Unpaid",
+                            "0",
+                            orderList
+                    );
+
+                    // Use System.currentTimeMillis to key and submit to Firebase
+                    String id_order = String.valueOf(currentTimeMillis());
+                    request.child(id_order).setValue(newRequest);
+                    sendNotification(id_order);
+
+                    // Clear the cart
+                    new Database(getBaseContext()).clearCart();
+
+                    Toast.makeText(Cart.this, "Thanks for your order !", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else if(rdiPaypal.isChecked()) {
+                    PayPalPayment payment = new PayPalPayment(
+                            new BigDecimal(fmtPrice),
+                            "USD",
+                            "Eat It Order",
+                            PayPalPayment.PAYMENT_INTENT_SALE);
+
+                    Intent intent = new Intent(getApplicationContext(), PaymentActivity.class);
+                    intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+                    intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
+                    startActivityForResult(intent, PAYPAL_REQUEST_CODE);
+                }
 
                 // Remove fragment
                 getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.edtAddress)).commit();
@@ -435,11 +511,12 @@ public class Cart extends AppCompatActivity implements
                                 Global.activeUser.getPhone(),
                                 Global.activeUser.getName(),
                                 address,
-                                String.format("%s,%s", orderPlace.getLatLng().latitude, orderPlace.getLatLng().longitude),
+                                String.format("%s,%s", latlng.latitude, latlng.longitude),
+                                message,
                                 total_price.getText().toString(),
-                                "0",
-                                comment,
+                                "Paypal",
                                 object.getJSONObject("response").getString("state"),
+                                "0",
                                 orderList
                         );
 

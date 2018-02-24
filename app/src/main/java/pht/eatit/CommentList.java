@@ -22,7 +22,7 @@ import pht.eatit.viewholder.CommentViewHolder;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class Comment extends AppCompatActivity {
+public class CommentList extends AppCompatActivity {
 
     SwipeRefreshLayout swipe_layout;
     RecyclerView rcvComment;
@@ -52,11 +52,13 @@ public class Comment extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/restaurent.otf")
                 .setFontAttrId(R.attr.fontPath)
                 .build());
-        setContentView(R.layout.activity_comment);
+
+        setContentView(R.layout.activity_comment_list);
 
         swipe_layout = findViewById(R.id.swipe_layout);
         rcvComment = findViewById(R.id.rcvComment);

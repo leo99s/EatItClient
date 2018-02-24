@@ -135,9 +135,9 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
         btnShowComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent comment = new Intent(FoodDetail.this, Comment.class);
-                comment.putExtra("food_id", food_id);
-                startActivity(comment);
+                Intent commentList = new Intent(FoodDetail.this, CommentList.class);
+                commentList.putExtra("food_id", food_id);
+                startActivity(commentList);
                 finish();
             }
         });
@@ -177,7 +177,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                 .setNoteDescriptions(Arrays.asList("Very Bad", "Not Good", "Quite OK", "Very Good", "Excellent"))
                 .setDefaultRating(3)
                 .setTitle("Rate this food")
-                .setDescription("Please select some stars and give your feedback")
+                .setDescription("Please give your feedback")
                 .setTitleTextColor(R.color.colorPrimary)
                 .setDescriptionTextColor(R.color.colorPrimary)
                 .setHint("Please write your comment here...")

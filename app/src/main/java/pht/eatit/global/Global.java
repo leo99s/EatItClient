@@ -25,7 +25,7 @@ public class Global {
         return RetrofitClient.getMapClient(BASE_MAP_URL).create(MapService.class);
     }
 
-    public static String convertCodeToStatus(String status) {
+    public static String getDeliveryStatus(String status) {
         if(status.equals("0")){
             return "Placed";
         }

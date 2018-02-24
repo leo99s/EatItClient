@@ -73,7 +73,7 @@
 			android:authorities="com.facebook.app.FacebookContentProvider2018087665070713"
 			android:exported="true" />
 
-		<activity android:name=".Comment" />
+		<activity android:name=".CommentList" />
 
 	</application>
 

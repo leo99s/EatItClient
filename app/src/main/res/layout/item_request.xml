@@ -10,58 +10,50 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:gravity="center_vertical">
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/id_request"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="9"
-            android:orientation="vertical">
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical|start"
+            android:textAllCaps="true"
+            android:text="01"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/id_request"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical|start"
-                android:textAllCaps="true"
-                android:text="01"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/phone_request"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical|start"
+            android:textAllCaps="true"
+            android:text="1234567890"
+            android:textStyle="italic" />
 
-            <TextView
-                android:id="@+id/phone_request"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical|start"
-                android:textAllCaps="true"
-                android:text="1234567890"
-                android:textStyle="italic" />
+        <TextView
+            android:id="@+id/address_request"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical|start"
+            android:textAllCaps="true"
+            android:text="TP. HCM"
+            android:textStyle="italic" />
 
-            <TextView
-                android:id="@+id/address_request"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical|start"
-                android:textAllCaps="true"
-                android:text="TP. HCM"
-                android:textStyle="italic" />
-
-            <TextView
-                android:id="@+id/status_request"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical|start"
-                android:textAllCaps="true"
-                android:text="Placed order"
-                android:textStyle="italic" />
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/delivery_status_request"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical|start"
+            android:textAllCaps="true"
+            android:text="Placed"
+            android:textStyle="italic" />
 
     </LinearLayout>
 

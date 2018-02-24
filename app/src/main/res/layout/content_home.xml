@@ -6,6 +6,7 @@
     android:id="@+id/swipe_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="pht.eatit.Home"
     tools:showIn="@layout/app_bar_home">
@@ -24,8 +25,7 @@
             android:id="@+id/rcvCategory"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            android:background="@android:color/white" />
+            android:scrollbars="vertical" />
 
     </LinearLayout>
 

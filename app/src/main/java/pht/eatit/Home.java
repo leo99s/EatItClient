@@ -30,6 +30,7 @@ import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
+import com.facebook.accountkit.AccountKit;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -345,12 +346,10 @@ public class Home extends AppCompatActivity
             Intent requestList = new Intent(Home.this, RequestList.class);
             startActivity(requestList);
         } else if (id == R.id.nav_sign_out) {
-            // Delete remembered user
-            Paper.book().destroy();
-
-            Intent signIn = new Intent(Home.this, SignIn.class);
-            signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(signIn);
+            AccountKit.logOut();
+            Intent welcome = new Intent(Home.this, Welcome.class);
+            welcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(welcome);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

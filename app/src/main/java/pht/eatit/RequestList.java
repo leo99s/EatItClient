@@ -85,7 +85,7 @@ public class RequestList extends AppCompatActivity {
                 holder.id_request.setText(adapter.getRef(position).getKey());
                 holder.phone_request.setText(model.getPhone());
                 holder.address_request.setText(model.getAddress());
-                holder.status_request.setText(Global.convertCodeToStatus(model.getStatus()));
+                holder.delivery_status_request.setText(Global.getDeliveryStatus(model.getDeliveryStatus()));
             }
         };
 
