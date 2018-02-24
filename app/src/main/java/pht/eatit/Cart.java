@@ -34,6 +34,8 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,7 +53,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import info.hoang8f.widget.FButton;
@@ -64,6 +68,7 @@ import pht.eatit.model.Request;
 import pht.eatit.model.Response;
 import pht.eatit.model.Sender;
 import pht.eatit.model.Token;
+import pht.eatit.model.User;
 import pht.eatit.remote.FCMService;
 import pht.eatit.remote.MapService;
 import pht.eatit.viewholder.OrderAdapter;
@@ -308,6 +313,7 @@ public class Cart extends AppCompatActivity implements
         final RadioButton rdiAddress = place_order.findViewById(R.id.rdiAddress);
         final RadioButton rdiCash = place_order.findViewById(R.id.rdiCash);
         final RadioButton rdiPaypal = place_order.findViewById(R.id.rdiPaypal);
+        final RadioButton rdiBalance = place_order.findViewById(R.id.rdiBalance);
 
         // Hide search icon before fragment
         edtAddress.getView().findViewById(R.id.place_autocomplete_search_button).setVisibility(View.GONE);
@@ -451,7 +457,7 @@ public class Cart extends AppCompatActivity implements
                         .replace(",", "");
 
                 // Check payment method
-                if(!rdiCash.isChecked() && !rdiPaypal.isChecked()){
+                if(!rdiCash.isChecked() && !rdiPaypal.isChecked() && !rdiBalance.isChecked()){
                     Toast.makeText(Cart.this, "Please select payment method !", Toast.LENGTH_SHORT).show();
 
                     // Remove fragment
@@ -493,6 +499,73 @@ public class Cart extends AppCompatActivity implements
                     intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
                     intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
                     startActivityForResult(intent, PAYPAL_REQUEST_CODE);
+                } else if(rdiBalance.isChecked()){
+                    double amount = 0;
+
+                    try {
+                        amount = Global.formatCurrency(total_price.getText().toString(), Locale.US).doubleValue();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(Global.activeUser.getBalance() >= amount){
+                        // Create new request
+                        Request newRequest = new Request(
+                                Global.activeUser.getPhone(),
+                                Global.activeUser.getName(),
+                                address,
+                                String.format("%s,%s", latlng.latitude, latlng.longitude),
+                                message,
+                                total_price.getText().toString(),
+                                "Balance",
+                                "Paid",
+                                "0",
+                                orderList
+                        );
+
+                        // Use System.currentTimeMillis to key and submit to Firebase
+                        final String id_order = String.valueOf(currentTimeMillis());
+                        request.child(id_order).setValue(newRequest);
+
+                        // Clear the cart
+                        new Database(getBaseContext()).clearCart();
+
+                        // Update balance
+                        double balance = Global.activeUser.getBalance() - amount;
+                        HashMap<String, Object> object = new HashMap<>();
+                        object.put("balance", balance);
+
+                        database.getReference("User")
+                                .child(Global.activeUser.getPhone())
+                                .updateChildren(object)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            // Refresh user
+                                            database.getReference("User")
+                                                    .child(Global.activeUser.getPhone())
+                                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                            Global.activeUser = dataSnapshot.getValue(User.class);
+                                                            sendNotification(id_order);
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(DatabaseError databaseError) {
+
+                                                        }
+                                                    });
+                                        }
+                                    }
+                                });
+
+                        Toast.makeText(Cart.this, "Thanks for your order !", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(Cart.this, "Your balance isn't enough !", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
                 // Remove fragment

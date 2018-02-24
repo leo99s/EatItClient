@@ -366,6 +366,9 @@ public class Home extends AppCompatActivity
         final MaterialEditText edtName = update_profile.findViewById(R.id.edtName);
         final MaterialEditText edtAddress = update_profile.findViewById(R.id.edtAddress);
 
+        edtName.setText(Global.activeUser.getName().toString());
+        edtAddress.setText(Global.activeUser.getAddress().toString());
+
         alert.setView(update_profile);
 
         alert.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
