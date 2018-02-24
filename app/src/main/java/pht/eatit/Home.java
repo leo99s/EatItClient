@@ -24,7 +24,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.andremion.counterfab.CounterFab;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
@@ -34,7 +33,6 @@ import com.facebook.accountkit.AccountKit;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,7 +43,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 import java.util.HashMap;
-import java.util.Map;
 import dmax.dialog.SpotsDialog;
 import io.paperdb.Paper;
 import pht.eatit.database.Database;
@@ -66,7 +63,7 @@ public class Home extends AppCompatActivity
     SliderLayout slider;
     RecyclerView rcvCategory;
     RecyclerView.LayoutManager layoutManager;
-    CounterFab fab;
+    CounterFab btnCart;
 
     FirebaseDatabase database;
     DatabaseReference category;
@@ -91,7 +88,7 @@ public class Home extends AppCompatActivity
         );
 
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Menu");
         setSupportActionBar(toolbar);
 
@@ -131,10 +128,10 @@ public class Home extends AppCompatActivity
             }
         };
 
-        fab = findViewById(R.id.fab);
-        //fab.setCount(new Database(this).getCartCount());
+        btnCart = findViewById(R.id.btnCart);
+        btnCart.setCount(new Database(this).getCartCount());
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        btnCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent cart = new Intent(Home.this, Cart.class);
@@ -169,6 +166,7 @@ public class Home extends AppCompatActivity
             @Override
             public void run() {
                 if(Global.isConnectedToInternet(Home.this)){
+                    setSlider();
                     loadCategory();
                 }
                 else {
@@ -182,6 +180,7 @@ public class Home extends AppCompatActivity
             @Override
             public void onRefresh() {
                 if(Global.isConnectedToInternet(Home.this)){
+                    setSlider();
                     loadCategory();
                 }
                 else {
@@ -201,6 +200,7 @@ public class Home extends AppCompatActivity
         rcvCategory.setLayoutAnimation(controller);
 
         if(Global.isConnectedToInternet(Home.this)){
+            setSlider();
             loadCategory();
         } else {
             Toast.makeText(this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
@@ -208,8 +208,30 @@ public class Home extends AppCompatActivity
         }
 
         updateToken(FirebaseInstanceId.getInstance().getToken());
+    }
 
-        setSlider();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        btnCart.setCount(new Database(this).getCartCount());
+
+        if(adapter != null){
+            adapter.startListening();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+        slider.stopAutoCycle();
+    }
+
+    private void updateToken(String token) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference("Token");
+        Token child = new Token(token, false);
+        reference.child(Global.activeUser.getPhone()).setValue(child);
     }
 
     private void setSlider() {
@@ -266,30 +288,6 @@ public class Home extends AppCompatActivity
         slider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
         slider.setCustomAnimation(new DescriptionAnimation());
         slider.setDuration(3000);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        fab.setCount(new Database(this).getCartCount());
-
-        if(adapter != null){
-            adapter.startListening();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        adapter.stopListening();
-        slider.stopAutoCycle();
-    }
-
-    private void updateToken(String token) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference reference = database.getReference("Token");
-        Token child = new Token(token, false);
-        reference.child(Global.activeUser.getPhone()).setValue(child);
     }
 
     private void loadCategory() {

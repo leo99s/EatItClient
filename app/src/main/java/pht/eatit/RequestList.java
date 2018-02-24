@@ -65,6 +65,21 @@ public class RequestList extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (adapter != null) {
+            adapter.startListening();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
+
     private void loadRequest(final String phone) {
         Query query = request.orderByChild("phone").equalTo(phone);
 

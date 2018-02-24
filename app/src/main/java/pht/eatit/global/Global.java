@@ -11,9 +11,6 @@ import pht.eatit.remote.RetrofitClient;
 public class Global {
 
     public static User activeUser;
-    public static final String DELETE = "Delete";
-    public static final String PHONE = "Phone";
-    public static final String PASSWORD = "Password";
     public static final String BASE_FCM_URL = "https://fcm.googleapis.com";
     public static final String BASE_MAP_URL = "https://maps.googleapis.com";
 
@@ -25,11 +22,11 @@ public class Global {
         return RetrofitClient.getMapClient(BASE_MAP_URL).create(MapService.class);
     }
 
-    public static String getDeliveryStatus(String status) {
-        if(status.equals("0")){
+    public static String getDeliveryStatus(String code) {
+        if(code.equals("0")){
             return "Placed";
         }
-        else if(status.equals("1")){
+        else if(code.equals("1")){
             return "On my way";
         }
         else {

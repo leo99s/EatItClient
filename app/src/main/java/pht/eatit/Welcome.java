@@ -1,7 +1,6 @@
 package pht.eatit;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -34,10 +33,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import dmax.dialog.SpotsDialog;
 import info.hoang8f.widget.FButton;
-import io.paperdb.Paper;
 import pht.eatit.global.Global;
 import pht.eatit.model.User;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;

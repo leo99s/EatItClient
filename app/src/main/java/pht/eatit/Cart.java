@@ -179,6 +179,40 @@ public class Cart extends AppCompatActivity implements
         });
     }
 
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable((this));
+
+        if(resultCode != ConnectionResult.SUCCESS){
+            if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)){
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICES_REQUEST_CODE).show();
+            } else {
+                Toast.makeText(this, "Your device isn't supported !", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+
+        mGoogleApiClient.connect();
+    }
+
+    private void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
@@ -195,27 +229,26 @@ public class Cart extends AppCompatActivity implements
         }
     }
 
-    private void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(UPDATE_INTERVAL);
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
-
-    private synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API).build();
-
-        mGoogleApiClient.connect();
-    }
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         displayLocation();
         updateLocation();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLastLocation = location;
+        displayLocation();
     }
 
     private void displayLocation() {
@@ -242,37 +275,22 @@ public class Cart extends AppCompatActivity implements
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        mLastLocation = location;
-        displayLocation();
-    }
+    private void loadOrder() {
+        orderList = new Database(this).loadOrder();
+        adapter = new OrderAdapter(this, orderList);
+        adapter.notifyDataSetChanged();
+        rcvCart.setAdapter(adapter);
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
-    }
+        // Calculate total price
+        int total = 0;
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable((this));
-
-        if(resultCode != ConnectionResult.SUCCESS){
-            if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)){
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICES_REQUEST_CODE).show();
-            } else {
-                Toast.makeText(this, "Your device isn't supported !", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-
-            return false;
+        for (Order order : orderList){
+            total += Integer.parseInt(order.getPrice()) * Integer.parseInt(order.getQuantity());
         }
 
-        return true;
+        Locale locale = new Locale("en", "US");
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
+        total_price.setText(numberFormat.format(total));
     }
 
     private void showAlert() {
@@ -586,27 +604,9 @@ public class Cart extends AppCompatActivity implements
         });
     }
 
-    private void loadOrder() {
-        orderList = new Database(this).loadOrder();
-        adapter = new OrderAdapter(this, orderList);
-        adapter.notifyDataSetChanged();
-        rcvCart.setAdapter(adapter);
-
-        // Calculate total price
-        int total = 0;
-
-        for (Order order : orderList){
-            total += Integer.parseInt(order.getPrice()) * Integer.parseInt(order.getQuantity());
-        }
-
-        Locale locale = new Locale("en", "US");
-        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
-        total_price.setText(numberFormat.format(total));
-    }
-
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if(item.getTitle().equals(Global.DELETE)){
+        if(item.getTitle().equals("Delete")){
             deleteOrder(item.getOrder());
         }
         

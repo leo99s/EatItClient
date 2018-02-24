@@ -12,24 +12,17 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import com.squareup.picasso.Picasso;
 import pht.eatit.Cart;
 import pht.eatit.R;
 import pht.eatit.database.Database;
-import pht.eatit.global.Global;
 import pht.eatit.model.Order;
-import pht.eatit.onclick.ItemClickListener;
 
-class OrderViewHolder extends RecyclerView.ViewHolder implements
-        View.OnClickListener,
-        View.OnCreateContextMenuListener {
+class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
     public ImageView image_food;
     public TextView name_food, price_food;
     public ElegantNumberButton quantity_food;
-
-    private ItemClickListener itemClickListener;
 
     public OrderViewHolder(View view) {
         super(view);
@@ -37,23 +30,13 @@ class OrderViewHolder extends RecyclerView.ViewHolder implements
         name_food = view.findViewById(R.id.name_food);
         price_food = view.findViewById(R.id.price_food);
         quantity_food = view.findViewById(R.id.quantity_food);
-
         view.setOnCreateContextMenuListener(this);
     }
 
-    public void setItemClickListener(ItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }
-
     @Override
-    public void onClick(View view) {
-
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
         menu.setHeaderTitle("Select an action");
-        menu.add(0, 0, getAdapterPosition(), Global.DELETE);
+        menu.add(0, 0, getAdapterPosition(), "Delete");
     }
 }
 

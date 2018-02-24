@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.andremion.counterfab.CounterFab;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,7 +26,6 @@ import com.squareup.picasso.Picasso;
 import com.stepstone.apprating.AppRatingDialog;
 import com.stepstone.apprating.listener.RatingDialogListener;
 import java.util.Arrays;
-
 import info.hoang8f.widget.FButton;
 import pht.eatit.database.Database;
 import pht.eatit.global.Global;
@@ -143,6 +141,25 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
         });
     }
 
+    private void getFoodDetail(String food_id) {
+        food.child(food_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                currentFood = dataSnapshot.getValue(Food.class);
+                Picasso.with(getBaseContext()).load(currentFood.getImage()).into(image_food);
+                collapsing_toolbar.setTitle(currentFood.getName());
+                name_food.setText(currentFood.getName());
+                price_food.setText(currentFood.getPrice());
+                description_food.setText(currentFood.getDescription());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void getRatingFood(String food_id) {
         Query rating_food = rating.orderByChild("food_id").equalTo(food_id);
         
@@ -189,25 +206,6 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                 
     }
 
-    private void getFoodDetail(String food_id) {
-        food.child(food_id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                currentFood = dataSnapshot.getValue(Food.class);
-                Picasso.with(getBaseContext()).load(currentFood.getImage()).into(image_food);
-                collapsing_toolbar.setTitle(currentFood.getName());
-                name_food.setText(currentFood.getName());
-                price_food.setText(currentFood.getPrice());
-                description_food.setText(currentFood.getDescription());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
     @Override
     public void onPositiveButtonClicked(int star, String comment) {
         // Get star rating and upload to Firebase
@@ -225,30 +223,6 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                 Toast.makeText(FoodDetail.this, "Thanks for your feedback !", Toast.LENGTH_SHORT).show();
             }
         });
-        
-        /*rating.child(Global.activeUser.getPhone()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child(Global.activeUser.getPhone()).exists()){
-                    // Remove the old rating value
-                    rating.child(Global.activeUser.getPhone()).removeValue();
-                    
-                    // Update new value
-                    rating.child(Global.activeUser.getPhone()).setValue(child);
-                }
-                else {
-                    rating.child(Global.activeUser.getPhone()).setValue(child);
-                }
-
-                getRatingFood(food_id);
-                Toast.makeText(FoodDetail.this, "Thanks for your feedback !", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
     @Override
