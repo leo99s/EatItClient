@@ -186,6 +186,7 @@ public class Welcome extends AppCompatActivity {
                                     if(!dataSnapshot.child(phone).exists()){
                                         // Create a new user
                                         User newUser = new User();
+                                        newUser.setPhone(phone);
                                         newUser.setName(phone);
                                         newUser.setAddress("");
                                         newUser.setBalance(0.0);
