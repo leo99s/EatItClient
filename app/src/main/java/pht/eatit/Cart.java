@@ -401,7 +401,7 @@ public class Cart extends AppCompatActivity implements
                                         latlng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
                                     } else {
                                         Toast.makeText(Cart.this, "Please update your address exactly !", Toast.LENGTH_SHORT).show();
-                                        latlng = new LatLng(90.0, 100.0);  // Default if latlng cannot be defined
+                                        latlng = new LatLng(10.8541466, 106.7242013);  // Default if latlng cannot be defined
                                     }
 
                                 } catch (JSONException e) {

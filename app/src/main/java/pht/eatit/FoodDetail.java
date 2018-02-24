@@ -112,8 +112,6 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
             }
         });
 
-        btnAdd.setCount(new Database(this).getCartCount());
-
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
