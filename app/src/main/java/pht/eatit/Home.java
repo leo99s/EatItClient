@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -22,6 +23,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.andremion.counterfab.CounterFab;
@@ -51,6 +53,7 @@ import pht.eatit.model.Banner;
 import pht.eatit.model.Category;
 import pht.eatit.model.Token;
 import pht.eatit.onclick.ItemClickListener;
+import pht.eatit.service.FirebaseMessaging;
 import pht.eatit.viewholder.CategoryViewHolder;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -319,8 +322,43 @@ public class Home extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.refresh){
-            loadCategory();
+        if(item.getItemId() == R.id.settings){
+            AlertDialog.Builder alert = new AlertDialog.Builder(Home.this);
+            alert.setTitle("Settings");
+
+            LayoutInflater inflater = LayoutInflater.from(this);
+            View layout_settings = inflater.inflate(R.layout.layout_settings, null);
+
+            final CheckBox ckbSubscribe = layout_settings.findViewById(R.id.ckbSubscribe);
+
+            // Remember the state of ckbSubscribe
+            Paper.init(this);
+            String isChecked = Paper.book().read("subscribed");
+
+            if(isChecked == null || TextUtils.isEmpty(isChecked) || isChecked.equals("false")){
+                ckbSubscribe.setChecked(false);
+            } else {
+                ckbSubscribe.setChecked(true);
+            }
+
+            alert.setView(layout_settings);
+
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int i) {
+                    dialog.dismiss();
+
+                    if(ckbSubscribe.isChecked()){
+                        com.google.firebase.messaging.FirebaseMessaging.getInstance().subscribeToTopic("News");
+                        Paper.book().write("subscribed", "true");
+                    } else {
+                        com.google.firebase.messaging.FirebaseMessaging.getInstance().unsubscribeFromTopic("News");
+                        Paper.book().write("subscribed", "false");
+                    }
+                }
+            });
+
+            alert.show();
         }
 
         return super.onOptionsItemSelected(item);

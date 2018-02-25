@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/refresh"
-        android:icon="@drawable/ic_refresh"
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings"
         android:iconTint="@android:color/white"
-        android:title="Refresh" />
+        android:title="Settings" />
 
 </menu>
