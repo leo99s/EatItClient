@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/swipe_layout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context="pht.eatit.Search">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<com.mancj.materialsearchbar.MaterialSearchBar
+			android:id="@+id/bar_search"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			app:mt_speechMode="false"
+			app:mt_hint="Enter a food name !">
+
+		</com.mancj.materialsearchbar.MaterialSearchBar>
+
+		<android.support.v7.widget.RecyclerView
+			android:id="@+id/rcvSearch"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:scrollbars="vertical"
+			android:layout_below="@id/bar_search">
+
+		</android.support.v7.widget.RecyclerView>
+
+	</RelativeLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>

@@ -100,37 +100,6 @@ public class Home extends AppCompatActivity
         database = FirebaseDatabase.getInstance();
         category = database.getReference("Category");
 
-        FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>()
-                .setQuery(category, Category.class).build();
-
-        adapter = new FirebaseRecyclerAdapter<Category, CategoryViewHolder>(options) {
-            @Override
-            public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_category, parent, false);
-
-                return new CategoryViewHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull CategoryViewHolder holder, int position, @NonNull Category model) {
-                holder.name_category.setText(model.getName());
-                Picasso.with(getBaseContext()).load(model.getImage()).into(holder.image_category);
-
-                holder.setItemClickListener(new ItemClickListener() {
-                    @Override
-                    public void onClick(View view, int position, boolean isLongClick) {
-                        // Get Category_ID and send to new activity
-                        Intent foodList = new Intent(Home.this, FoodList.class);
-
-                        // Category_ID = Key of Category table
-                        foodList.putExtra("category_id", adapter.getRef(position).getKey());
-                        startActivity(foodList);
-                    }
-                });
-            }
-        };
-
         btnCart = findViewById(R.id.btnCart);
         btnCart.setCount(new Database(this).getCartCount(Global.activeUser.getPhone()));
 
@@ -294,6 +263,37 @@ public class Home extends AppCompatActivity
     }
 
     private void loadCategory() {
+        FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>()
+                .setQuery(category, Category.class).build();
+
+        adapter = new FirebaseRecyclerAdapter<Category, CategoryViewHolder>(options) {
+            @Override
+            public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_category, parent, false);
+
+                return new CategoryViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull CategoryViewHolder holder, int position, @NonNull Category model) {
+                holder.name_category.setText(model.getName());
+                Picasso.with(getBaseContext()).load(model.getImage()).into(holder.image_category);
+
+                holder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position, boolean isLongClick) {
+                        // Get Category_ID and send to new activity
+                        Intent foodList = new Intent(Home.this, FoodList.class);
+
+                        // Category_ID = Key of Category table
+                        foodList.putExtra("category_id", adapter.getRef(position).getKey());
+                        startActivity(foodList);
+                    }
+                });
+            }
+        };
+
         adapter.startListening();
         rcvCategory.setAdapter(adapter);
         swipe_layout.setRefreshing(false);
@@ -322,7 +322,10 @@ public class Home extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.settings){
+        if(item.getItemId() == R.id.search){
+            Intent search = new Intent(Home.this, Search.class);
+            startActivity(search);
+        } else if(item.getItemId() == R.id.settings){
             AlertDialog.Builder alert = new AlertDialog.Builder(Home.this);
             alert.setTitle("Settings");
 
