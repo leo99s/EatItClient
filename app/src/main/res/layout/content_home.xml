@@ -8,18 +8,20 @@
     android:layout_height="match_parent"
     android:background="@drawable/background"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="pht.eatit.Home"
-    tools:showIn="@layout/app_bar_home">
+    tools:showIn="@layout/app_bar_home"
+    tools:context="pht.eatit.Home">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="3dp">
 
         <com.daimajia.slider.library.SliderLayout
             android:id="@+id/slider"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="200dp"
+            android:layout_margin="3dp" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rcvCategory"

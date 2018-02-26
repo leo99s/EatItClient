@@ -3,7 +3,7 @@ package pht.eatit.model;
 public class User {
 
     private String phone, name, password, admin, secureCode, address;
-    private double balance;
+    private Object balance;
 
     public User() {
     }
@@ -63,11 +63,11 @@ public class User {
         this.address = address;
     }
 
-    public double getBalance() {
+    public Object getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(Object balance) {
         this.balance = balance;
     }
 }

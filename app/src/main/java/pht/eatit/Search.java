@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.facebook.CallbackManager;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
@@ -31,12 +30,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import pht.eatit.database.Database;
 import pht.eatit.global.Global;
+import pht.eatit.model.Favorite;
 import pht.eatit.model.Food;
 import pht.eatit.model.Order;
 import pht.eatit.onclick.ItemClickListener;
@@ -228,8 +226,18 @@ public class Search extends AppCompatActivity {
                 holder.image_favorite.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Favorite newFavorite = new Favorite();
+                        newFavorite.setPhone(Global.activeUser.getPhone());
+                        newFavorite.setFood_id(adapter.getRef(position).getKey());
+                        newFavorite.setCategory_id(model.getCategory_id());
+                        newFavorite.setName(model.getName());
+                        newFavorite.setImage(model.getImage());
+                        newFavorite.setDescription(model.getDescription());
+                        newFavorite.setPrice(model.getPrice());
+                        newFavorite.setDiscount(model.getDiscount());
+
                         if(!favorite.isFavorite(Global.activeUser.getPhone(), adapter.getRef(position).getKey())){
-                            favorite.addToFavorite(Global.activeUser.getPhone(), adapter.getRef(position).getKey());
+                            favorite.addToFavorite(newFavorite);
                             holder.image_favorite.setImageResource(R.drawable.ic_favorite);
                             Toast.makeText(Search.this, model.getName() + " was added to favorite !", Toast.LENGTH_SHORT).show();
                         }

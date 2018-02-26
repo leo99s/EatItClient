@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import pht.eatit.onclick.ItemSwipeListener;
+import pht.eatit.viewholder.FavoriteViewHolder;
 import pht.eatit.viewholder.OrderViewHolder;
 
 public class ItemTouch extends ItemTouchHelper.SimpleCallback {
@@ -35,27 +36,47 @@ public class ItemTouch extends ItemTouchHelper.SimpleCallback {
 
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        View row_foreground = ((OrderViewHolder) viewHolder).row_foreground;
-        getDefaultUIUtil().clearView(row_foreground);
+        if(viewHolder instanceof OrderViewHolder) {
+            View row_foreground = ((OrderViewHolder) viewHolder).row_foreground;
+            getDefaultUIUtil().clearView(row_foreground);
+        } else if(viewHolder instanceof FavoriteViewHolder) {
+            View row_foreground = ((FavoriteViewHolder) viewHolder).row_foreground;
+            getDefaultUIUtil().clearView(row_foreground);
+        }
     }
 
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        View row_foreground = ((OrderViewHolder) viewHolder).row_foreground;
-        getDefaultUIUtil().onDraw(c, recyclerView, row_foreground, dX, dY, actionState, isCurrentlyActive);
-    }
-
-    @Override
-    public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-        if(viewHolder != null){
+        if (viewHolder instanceof OrderViewHolder) {
             View row_foreground = ((OrderViewHolder) viewHolder).row_foreground;
-            getDefaultUIUtil().onSelected(row_foreground);
+            getDefaultUIUtil().onDraw(c, recyclerView, row_foreground, dX, dY, actionState, isCurrentlyActive);
+        } else if(viewHolder instanceof FavoriteViewHolder) {
+            View row_foreground = ((FavoriteViewHolder) viewHolder).row_foreground;
+            getDefaultUIUtil().onDraw(c, recyclerView, row_foreground, dX, dY, actionState, isCurrentlyActive);
         }
     }
 
     @Override
     public void onChildDrawOver(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        View row_foreground = ((OrderViewHolder) viewHolder).row_foreground;
-        getDefaultUIUtil().onDrawOver(c, recyclerView, row_foreground, dX, dY, actionState, isCurrentlyActive);
+        if (viewHolder instanceof OrderViewHolder) {
+            View row_foreground = ((OrderViewHolder) viewHolder).row_foreground;
+            getDefaultUIUtil().onDrawOver(c, recyclerView, row_foreground, dX, dY, actionState, isCurrentlyActive);
+        } else if(viewHolder instanceof FavoriteViewHolder) {
+            View row_foreground = ((FavoriteViewHolder) viewHolder).row_foreground;
+            getDefaultUIUtil().onDrawOver(c, recyclerView, row_foreground, dX, dY, actionState, isCurrentlyActive);
+        }
+    }
+
+    @Override
+    public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+        if(viewHolder != null){
+            if (viewHolder instanceof OrderViewHolder) {
+                View row_foreground = ((OrderViewHolder) viewHolder).row_foreground;
+                getDefaultUIUtil().onSelected(row_foreground);
+            } else if(viewHolder instanceof FavoriteViewHolder) {
+                View row_foreground = ((FavoriteViewHolder) viewHolder).row_foreground;
+                getDefaultUIUtil().onSelected(row_foreground);
+            }
+        }
     }
 }

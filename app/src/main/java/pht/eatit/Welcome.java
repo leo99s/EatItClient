@@ -189,7 +189,7 @@ public class Welcome extends AppCompatActivity {
                                         newUser.setPhone(phone);
                                         newUser.setName(phone);
                                         newUser.setAddress("");
-                                        newUser.setBalance(0.0);
+                                        newUser.setBalance(String.valueOf(0.0));
 
                                         user.child(phone).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override

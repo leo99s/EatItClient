@@ -63,7 +63,8 @@
 			android:exported="true" />
 
 		<activity android:name=".CommentList" />
-		<activity android:name=".Search"></activity>
+		<activity android:name=".Search" />
+		<activity android:name=".FavoriteList" />
 	</application>
 
 </manifest>

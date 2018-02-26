@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 import java.util.ArrayList;
 import java.util.List;
+
+import pht.eatit.model.Favorite;
 import pht.eatit.model.Order;
 
 public class Database extends SQLiteAssetHelper {
@@ -26,10 +28,10 @@ public class Database extends SQLiteAssetHelper {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
         String table = "OrderDetail";
-        String[] column = { "phone", "food_id", "image", "name", "price", "quantity", "discount" };
+        String[] columns = { "phone", "food_id", "image", "name", "price", "quantity", "discount" };
 
         queryBuilder.setTables(table);
-        Cursor cursor = queryBuilder.query(database, column, "phone=?", new String[] { phone }, null, null, null);
+        Cursor cursor = queryBuilder.query(database, columns, "phone=?", new String[] { phone }, null, null, null);
 
         if(cursor.moveToFirst()){
             do {
@@ -124,6 +126,38 @@ public class Database extends SQLiteAssetHelper {
         return flag;
     }
 
+
+
+    // Load all favorites
+    public List<Favorite> loadFavorite(String phone){
+        final List<Favorite> favoriteList = new ArrayList<>();
+
+        SQLiteDatabase database = getReadableDatabase();
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+
+        String table = "Favorite";
+        String[] columns = { "phone", "food_id", "category_id", "name", "image", "description", "price", "discount" };
+
+        queryBuilder.setTables(table);
+        Cursor cursor = queryBuilder.query(database, columns, "phone=?", new String[] { phone }, null, null, null);
+
+        if(cursor.moveToFirst()){
+            do {
+                favoriteList.add(new Favorite(
+                        cursor.getString(cursor.getColumnIndex("phone")),
+                        cursor.getString(cursor.getColumnIndex("food_id")),
+                        cursor.getString(cursor.getColumnIndex("category_id")),
+                        cursor.getString(cursor.getColumnIndex("name")),
+                        cursor.getString(cursor.getColumnIndex("image")),
+                        cursor.getString(cursor.getColumnIndex("description")),
+                        cursor.getString(cursor.getColumnIndex("price")),
+                        cursor.getString(cursor.getColumnIndex("discount"))));
+            } while (cursor.moveToNext());
+        }
+
+        return favoriteList;
+    }
+
     // Is favorite
     public boolean isFavorite(String phone, String food_id){
         SQLiteDatabase database = getReadableDatabase();
@@ -140,9 +174,19 @@ public class Database extends SQLiteAssetHelper {
     }
 
     // Add to favorite
-    public void addToFavorite(String phone, String food_id){
+    public void addToFavorite(Favorite item){
         SQLiteDatabase database = getReadableDatabase();
-        String query = String.format("INSERT INTO Favorite (phone, food_id) VALUES ('%s', '%s');", phone, food_id);
+
+        String query = String.format("INSERT INTO Favorite (phone, food_id, category_id, name, image, description, price, discount) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');",
+                item.getPhone(),
+                item.getFood_id(),
+                item.getCategory_id(),
+                item.getName(),
+                item.getImage(),
+                item.getDescription(),
+                item.getPrice(),
+                item.getDiscount());
+
         database.execSQL(query);
     }
 

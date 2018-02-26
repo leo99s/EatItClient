@@ -164,6 +164,7 @@ public class Home extends AppCompatActivity
 
         rcvCategory = findViewById(R.id.rcvCategory);
         rcvCategory.setLayoutManager(new GridLayoutManager(Home.this, 2));
+
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
                 rcvCategory.getContext(),
                 R.anim.layout_fall_down
@@ -378,6 +379,9 @@ public class Home extends AppCompatActivity
             startActivity(home);
         } else if(id == R.id.nav_profile){
             showProfileDialog();
+        } else if(id == R.id.nav_favorite){
+            Intent favoriteList = new Intent(Home.this, FavoriteList.class);
+            startActivity(favoriteList);
         } else if (id == R.id.nav_cart) {
             Intent cart = new Intent(Home.this, Cart.class);
             startActivity(cart);

@@ -19,7 +19,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -176,6 +175,7 @@ public class Cart extends AppCompatActivity implements
         rcvCart.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         rcvCart.setLayoutManager(layoutManager);
+
         itemTouch = new ItemTouch(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(itemTouch).attachToRecyclerView(rcvCart);
 
@@ -521,7 +521,7 @@ public class Cart extends AppCompatActivity implements
                         e.printStackTrace();
                     }
 
-                    if(Global.activeUser.getBalance() >= amount){
+                    if(Double.parseDouble(Global.activeUser.getBalance().toString()) >= amount){
                         // Create new request
                         Request newRequest = new Request(
                                 Global.activeUser.getPhone(),
@@ -544,7 +544,7 @@ public class Cart extends AppCompatActivity implements
                         new Database(getBaseContext()).clearCart(Global.activeUser.getPhone());
 
                         // Update balance
-                        double balance = Global.activeUser.getBalance() - amount;
+                        double balance = Double.parseDouble(Global.activeUser.getBalance().toString()) - amount;
                         HashMap<String, Object> object = new HashMap<>();
                         object.put("balance", balance);
 

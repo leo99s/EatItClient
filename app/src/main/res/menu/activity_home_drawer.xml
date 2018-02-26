@@ -13,9 +13,15 @@
 
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_account_circle"
+            android:icon="@drawable/ic_account_box"
             android:iconTint="@android:color/white"
             android:title="Profile" />
+
+        <item
+            android:id="@+id/nav_favorite"
+            android:icon="@drawable/ic_favorite"
+            android:iconTint="@android:color/white"
+            android:title="Favorite" />
 
         <item
             android:id="@+id/nav_cart"

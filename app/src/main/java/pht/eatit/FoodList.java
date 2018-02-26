@@ -15,6 +15,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.share.model.SharePhoto;
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import pht.eatit.database.Database;
 import pht.eatit.global.Global;
+import pht.eatit.model.Favorite;
 import pht.eatit.model.Food;
 import pht.eatit.model.Order;
 import pht.eatit.onclick.ItemClickListener;
@@ -285,28 +288,38 @@ public class FoodList extends AppCompatActivity {
                     holder.image_favorite.setImageResource(R.drawable.ic_favorite);
                 }
 
+                // Click to change the state of favorite
+                holder.image_favorite.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Favorite newFavorite = new Favorite();
+                        newFavorite.setPhone(Global.activeUser.getPhone());
+                        newFavorite.setFood_id(adapter.getRef(position).getKey());
+                        newFavorite.setCategory_id(model.getCategory_id());
+                        newFavorite.setName(model.getName());
+                        newFavorite.setImage(model.getImage());
+                        newFavorite.setDescription(model.getDescription());
+                        newFavorite.setPrice(model.getPrice());
+                        newFavorite.setDiscount(model.getDiscount());
+
+                        if(!favorite.isFavorite(Global.activeUser.getPhone(), adapter.getRef(position).getKey())){
+                            favorite.addToFavorite(newFavorite);
+                            holder.image_favorite.setImageResource(R.drawable.ic_favorite);
+                            Toast.makeText(FoodList.this, model.getName() + " was added to your favorite !", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            favorite.removeFromFavorite(Global.activeUser.getPhone(), adapter.getRef(position).getKey());
+                            holder.image_favorite.setImageResource(R.drawable.ic_favorite_border);
+                            Toast.makeText(FoodList.this, model.getName() + " was deleted from your favorite !", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
                 // Click to share to Facebook
                 holder.image_share.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Picasso.with(getApplicationContext()).load(model.getImage()).into(target);
-                    }
-                });
-
-                // Click to change the state of favorite
-                holder.image_favorite.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(!favorite.isFavorite(Global.activeUser.getPhone(), adapter.getRef(position).getKey())){
-                            favorite.addToFavorite(Global.activeUser.getPhone(), adapter.getRef(position).getKey());
-                            holder.image_favorite.setImageResource(R.drawable.ic_favorite);
-                            Toast.makeText(FoodList.this, model.getName() + " was added to favorite !", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            favorite.removeFromFavorite(Global.activeUser.getPhone(), adapter.getRef(position).getKey());
-                            holder.image_favorite.setImageResource(R.drawable.ic_favorite_border);
-                            Toast.makeText(FoodList.this, model.getName() + " was deleted from favorite !", Toast.LENGTH_SHORT).show();
-                        }
                     }
                 });
 
