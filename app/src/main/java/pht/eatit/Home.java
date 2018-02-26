@@ -132,7 +132,7 @@ public class Home extends AppCompatActivity
         };
 
         btnCart = findViewById(R.id.btnCart);
-        btnCart.setCount(new Database(this).getCartCount());
+        btnCart.setCount(new Database(this).getCartCount(Global.activeUser.getPhone()));
 
         btnCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,7 +216,7 @@ public class Home extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        btnCart.setCount(new Database(this).getCartCount());
+        btnCart.setCount(new Database(this).getCartCount(Global.activeUser.getPhone()));
 
         if(adapter != null){
             adapter.startListening();

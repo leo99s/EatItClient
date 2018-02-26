@@ -116,6 +116,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
             @Override
             public void onClick(View v) {
                 new Database(getBaseContext()).addOrder(new Order(
+                        Global.activeUser.getPhone(),
                         food_id,
                         currentFood.getImage(),
                         currentFood.getName(),

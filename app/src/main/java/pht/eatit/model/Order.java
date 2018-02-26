@@ -2,14 +2,13 @@ package pht.eatit.model;
 
 public class Order {
 
-    private int id;
-    private String food_id, image, name, price, quantity, discount;
+    private String phone, food_id, image, name, price, quantity, discount;
 
     public Order() {
     }
 
-    public Order(int id, String food_id, String image, String name, String price, String quantity, String discount) {
-        this.id = id;
+    public Order(String phone, String food_id, String image, String name, String price, String quantity, String discount) {
+        this.phone = phone;
         this.food_id = food_id;
         this.image = image;
         this.name = name;
@@ -18,21 +17,12 @@ public class Order {
         this.discount = discount;
     }
 
-    public Order(String food_id, String image, String name, String price, String quantity, String discount) {
-        this.food_id = food_id;
-        this.image = image;
-        this.name = name;
-        this.price = price;
-        this.quantity = quantity;
-        this.discount = discount;
+    public String getPhone() {
+        return phone;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getFood_id() {

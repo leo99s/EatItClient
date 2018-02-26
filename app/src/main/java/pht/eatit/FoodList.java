@@ -303,24 +303,34 @@ public class FoodList extends AppCompatActivity {
                             Toast.makeText(FoodList.this, model.getName() + " was added to favorite !", Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            favorite.deleteFromFavorite(Global.activeUser.getPhone(), adapter.getRef(position).getKey());
+                            favorite.removeFromFavorite(Global.activeUser.getPhone(), adapter.getRef(position).getKey());
                             holder.image_favorite.setImageResource(R.drawable.ic_favorite_border);
                             Toast.makeText(FoodList.this, model.getName() + " was deleted from favorite !", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
 
+                // Quick cart
                 holder.image_cart.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new Database(getBaseContext()).addOrder(new Order(
-                                adapter.getRef(position).getKey(),
-                                model.getImage(),
-                                model.getName(),
-                                model.getPrice(),
-                                "1",
-                                model.getDiscount()
-                        ));
+                        final boolean isFoodExisted = new Database(FoodList.this).isFoodExisted(Global.activeUser.getPhone(), adapter.getRef(position).getKey());
+
+                        if (!isFoodExisted) {
+                            new Database(getBaseContext()).addOrder(new Order(
+                                    Global.activeUser.getPhone(),
+                                    adapter.getRef(position).getKey(),
+                                    model.getImage(),
+                                    model.getName(),
+                                    model.getPrice(),
+                                    "1",
+                                    model.getDiscount()
+                            ));
+                        } else {
+                            new Database(FoodList.this).increaseOrder(
+                                    Global.activeUser.getPhone(),
+                                    adapter.getRef(position).getKey());
+                        }
 
                         Toast.makeText(FoodList.this, "Added to your cart !", Toast.LENGTH_SHORT).show();
                     }

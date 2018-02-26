@@ -5,14 +5,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.app.ActivityCompat;
@@ -62,6 +66,7 @@ import info.hoang8f.widget.FButton;
 import pht.eatit.database.Database;
 import pht.eatit.global.Config;
 import pht.eatit.global.Global;
+import pht.eatit.helper.ItemTouch;
 import pht.eatit.model.Notification;
 import pht.eatit.model.Order;
 import pht.eatit.model.Request;
@@ -69,9 +74,11 @@ import pht.eatit.model.Response;
 import pht.eatit.model.Sender;
 import pht.eatit.model.Token;
 import pht.eatit.model.User;
+import pht.eatit.onclick.ItemSwipeListener;
 import pht.eatit.remote.FCMService;
 import pht.eatit.remote.MapService;
 import pht.eatit.viewholder.OrderAdapter;
+import pht.eatit.viewholder.OrderViewHolder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -83,12 +90,15 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 public class Cart extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener,
+        ItemSwipeListener {
 
+    RelativeLayout root_layout;
     public TextView total_price;
     FButton btnOrder;
     RecyclerView rcvCart;
     RecyclerView.LayoutManager layoutManager;
+    ItemTouchHelper.SimpleCallback itemTouch;
 
     FirebaseDatabase database;
     DatabaseReference request;
@@ -159,12 +169,15 @@ public class Cart extends AppCompatActivity implements
         paypal.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         startService(paypal);
 
+        root_layout = findViewById(R.id.root_layout);
         total_price = findViewById(R.id.total_price);
         btnOrder = findViewById(R.id.btnOrder);
         rcvCart = findViewById(R.id.rcvCart);
         rcvCart.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         rcvCart.setLayoutManager(layoutManager);
+        itemTouch = new ItemTouch(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouch).attachToRecyclerView(rcvCart);
 
         database = FirebaseDatabase.getInstance();
         request = database.getReference("Request");
@@ -281,7 +294,7 @@ public class Cart extends AppCompatActivity implements
     }
 
     private void loadOrder() {
-        orderList = new Database(this).loadOrder();
+        orderList = new Database(this).loadOrder(Global.activeUser.getPhone());
         adapter = new OrderAdapter(this, orderList);
         adapter.notifyDataSetChanged();
         rcvCart.setAdapter(adapter);
@@ -484,7 +497,7 @@ public class Cart extends AppCompatActivity implements
                     sendNotification(id_order);
 
                     // Clear the cart
-                    new Database(getBaseContext()).clearCart();
+                    new Database(getBaseContext()).clearCart(Global.activeUser.getPhone());
 
                     Toast.makeText(Cart.this, "Thanks for your order !", Toast.LENGTH_SHORT).show();
                     finish();
@@ -528,7 +541,7 @@ public class Cart extends AppCompatActivity implements
                         request.child(id_order).setValue(newRequest);
 
                         // Clear the cart
-                        new Database(getBaseContext()).clearCart();
+                        new Database(getBaseContext()).clearCart(Global.activeUser.getPhone());
 
                         // Update balance
                         double balance = Global.activeUser.getBalance() - amount;
@@ -617,7 +630,7 @@ public class Cart extends AppCompatActivity implements
                         sendNotification(id_order);
 
                         // Clear the cart
-                        new Database(getBaseContext()).clearCart();
+                        new Database(getBaseContext()).clearCart(Global.activeUser.getPhone());
 
                         Toast.makeText(this, "Thanks for your order !", Toast.LENGTH_SHORT).show();
                         finish();
@@ -678,22 +691,29 @@ public class Cart extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        if(item.getTitle().equals("Delete")){
-            deleteOrder(item.getOrder());
-        }
-        
-        return true;
-    }
+    public void onSwipe(RecyclerView.ViewHolder viewHolder, int position, int direction) {
+        if(viewHolder instanceof OrderViewHolder){
+            final Order deleted_food = ((OrderAdapter) rcvCart.getAdapter()).getItem(viewHolder.getAdapterPosition());
+            final int index = viewHolder.getAdapterPosition();
+            String name_food = ((OrderAdapter) rcvCart.getAdapter()).getItem(viewHolder.getAdapterPosition()).getName();
+            adapter.removeItem(index);
+            new Database(Cart.this).deleteOrder(Global.activeUser.getPhone(), deleted_food.getFood_id());
+            loadOrder();
 
-    private void deleteOrder(int position) {
-        orderList.remove(position);
-        new Database(this).clearCart();
-        
-        for (Order order : orderList){
-            new Database(this).addOrder(order);
-        }
+            // Snackbar
+            Snackbar snackbar = Snackbar.make(root_layout, name_food + " was removed from your cart !", Snackbar.LENGTH_LONG);
+            snackbar.setActionTextColor(Color.GREEN);
 
-        loadOrder();
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    adapter.restoreItem(deleted_food, index);
+                    new Database(Cart.this).addOrder(deleted_food);
+                    loadOrder();
+                }
+            });
+
+            snackbar.show();
+        }
     }
 }
