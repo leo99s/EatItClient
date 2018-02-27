@@ -126,6 +126,7 @@ public class Home extends AppCompatActivity
         txtUserName.setText(Global.activeUser.getName());
 
         swipe_layout = findViewById(R.id.swipe_layout);
+
         swipe_layout.setColorSchemeResources(
                 R.color.colorPrimary,
                 android.R.color.holo_green_dark,
@@ -133,13 +134,34 @@ public class Home extends AppCompatActivity
                 android.R.color.holo_blue_dark
         );
 
+        rcvCategory = findViewById(R.id.rcvCategory);
+        rcvCategory.setLayoutManager(new GridLayoutManager(Home.this, 2));
+
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
+                rcvCategory.getContext(),
+                R.anim.layout_fall_down
+        );
+
+        rcvCategory.setLayoutAnimation(controller);
+
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+
+        loadCategory();
+
         // Loading for the first time by default
         swipe_layout.post(new Runnable() {
             @Override
             public void run() {
                 if(Global.isConnectedToInternet(Home.this)){
                     setSlider();
-                    loadCategory();
+
+                    adapter.startListening();
+                    rcvCategory.setAdapter(adapter);
+                    swipe_layout.setRefreshing(false);
+
+                    // Animation
+                    rcvCategory.getAdapter().notifyDataSetChanged();
+                    rcvCategory.scheduleLayoutAnimation();
                 }
                 else {
                     Toast.makeText(Home.this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
@@ -153,7 +175,14 @@ public class Home extends AppCompatActivity
             public void onRefresh() {
                 if(Global.isConnectedToInternet(Home.this)){
                     setSlider();
-                    loadCategory();
+
+                    adapter.startListening();
+                    rcvCategory.setAdapter(adapter);
+                    swipe_layout.setRefreshing(false);
+
+                    // Animation
+                    rcvCategory.getAdapter().notifyDataSetChanged();
+                    rcvCategory.scheduleLayoutAnimation();
                 }
                 else {
                     Toast.makeText(Home.this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
@@ -161,26 +190,6 @@ public class Home extends AppCompatActivity
                 }
             }
         });
-
-        rcvCategory = findViewById(R.id.rcvCategory);
-        rcvCategory.setLayoutManager(new GridLayoutManager(Home.this, 2));
-
-        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
-                rcvCategory.getContext(),
-                R.anim.layout_fall_down
-        );
-
-        rcvCategory.setLayoutAnimation(controller);
-
-        if(Global.isConnectedToInternet(Home.this)){
-            setSlider();
-            loadCategory();
-        } else {
-            Toast.makeText(this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        updateToken(FirebaseInstanceId.getInstance().getToken());
     }
 
     @Override
@@ -205,6 +214,39 @@ public class Home extends AppCompatActivity
         DatabaseReference reference = database.getReference("Token");
         Token child = new Token(token, false);
         reference.child(Global.activeUser.getPhone()).setValue(child);
+    }
+
+    private void loadCategory() {
+        FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>()
+                .setQuery(category, Category.class).build();
+
+        adapter = new FirebaseRecyclerAdapter<Category, CategoryViewHolder>(options) {
+            @Override
+            public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_category, parent, false);
+
+                return new CategoryViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull CategoryViewHolder holder, int position, @NonNull Category model) {
+                holder.name_category.setText(model.getName());
+                Picasso.with(getBaseContext()).load(model.getImage()).into(holder.image_category);
+
+                holder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position, boolean isLongClick) {
+                        // Get Category_ID and send to new activity
+                        Intent foodList = new Intent(Home.this, FoodList.class);
+
+                        // Category_ID = Key of Category table
+                        foodList.putExtra("category_id", adapter.getRef(position).getKey());
+                        startActivity(foodList);
+                    }
+                });
+            }
+        };
     }
 
     private void setSlider() {
@@ -261,47 +303,6 @@ public class Home extends AppCompatActivity
         slider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
         slider.setCustomAnimation(new DescriptionAnimation());
         slider.setDuration(3000);
-    }
-
-    private void loadCategory() {
-        FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>()
-                .setQuery(category, Category.class).build();
-
-        adapter = new FirebaseRecyclerAdapter<Category, CategoryViewHolder>(options) {
-            @Override
-            public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_category, parent, false);
-
-                return new CategoryViewHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull CategoryViewHolder holder, int position, @NonNull Category model) {
-                holder.name_category.setText(model.getName());
-                Picasso.with(getBaseContext()).load(model.getImage()).into(holder.image_category);
-
-                holder.setItemClickListener(new ItemClickListener() {
-                    @Override
-                    public void onClick(View view, int position, boolean isLongClick) {
-                        // Get Category_ID and send to new activity
-                        Intent foodList = new Intent(Home.this, FoodList.class);
-
-                        // Category_ID = Key of Category table
-                        foodList.putExtra("category_id", adapter.getRef(position).getKey());
-                        startActivity(foodList);
-                    }
-                });
-            }
-        };
-
-        adapter.startListening();
-        rcvCategory.setAdapter(adapter);
-        swipe_layout.setRefreshing(false);
-
-        // Animation
-        rcvCategory.getAdapter().notifyDataSetChanged();
-        rcvCategory.scheduleLayoutAnimation();
     }
 
     @Override

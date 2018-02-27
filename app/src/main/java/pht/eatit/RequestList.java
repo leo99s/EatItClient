@@ -47,22 +47,15 @@ public class RequestList extends AppCompatActivity {
 
         setContentView(R.layout.activity_request_list);
 
-        rcvRequest = findViewById(R.id.rcvRequest);
-
         database = FirebaseDatabase.getInstance();
         request = database.getReference("Request");
 
+        rcvRequest = findViewById(R.id.rcvRequest);
         rcvRequest.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         rcvRequest.setLayoutManager(layoutManager);
 
-        // getIntent != null : Có String Extra
-        if(getIntent() == null){    // Start Order Activity when click Order on Menu Navigation
-            loadRequest(Global.activeUser.getPhone());
-        }
-        else {  // Start Order Activity when click notification of order status
-            loadRequest(getIntent().getStringExtra("phone"));
-        }
+        loadRequest(Global.activeUser.getPhone());
     }
 
     @Override
@@ -105,6 +98,7 @@ public class RequestList extends AppCompatActivity {
         };
 
         adapter.startListening();
+        adapter.notifyDataSetChanged();
         rcvRequest.setAdapter(adapter);
     }
 }

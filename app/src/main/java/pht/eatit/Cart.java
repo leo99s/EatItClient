@@ -168,6 +168,9 @@ public class Cart extends AppCompatActivity implements
         paypal.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         startService(paypal);
 
+        database = FirebaseDatabase.getInstance();
+        request = database.getReference("Request");
+
         root_layout = findViewById(R.id.root_layout);
         total_price = findViewById(R.id.total_price);
         btnOrder = findViewById(R.id.btnOrder);
@@ -178,9 +181,6 @@ public class Cart extends AppCompatActivity implements
 
         itemTouch = new ItemTouch(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(itemTouch).attachToRecyclerView(rcvCart);
-
-        database = FirebaseDatabase.getInstance();
-        request = database.getReference("Request");
 
         loadOrder();
 
@@ -657,7 +657,7 @@ public class Cart extends AppCompatActivity implements
                     Token serverToken = childDataSnapshot.getValue(Token.class);
 
                     // Create raw payload to send
-                    Notification notification = new Notification("Hoàng Tâm", "You have a new order : " + id_order);
+                    Notification notification = new Notification("Eat It", "You have a new order : " + id_order);
                     Sender content = new Sender(serverToken.getToken(), notification);
                     mFCMService.sendNotification(content)
                             .enqueue(new Callback<Response>() {

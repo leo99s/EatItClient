@@ -116,7 +116,10 @@ public class FoodList extends AppCompatActivity {
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
 
-        bar_search = findViewById(R.id.bar_search);
+        database = FirebaseDatabase.getInstance();
+        food = database.getReference("Food");
+
+        favorite = new Database(this);
 
         swipe_layout = findViewById(R.id.swipe_layout);
 
@@ -126,6 +129,12 @@ public class FoodList extends AppCompatActivity {
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark
         );
+
+        rcvFood = findViewById(R.id.rcvFood);
+        rcvFood.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        rcvFood.setLayoutManager(layoutManager);
+        bar_search = findViewById(R.id.bar_search);
 
         // Loading for the first time by default
         swipe_layout.post(new Runnable() {
@@ -221,31 +230,6 @@ public class FoodList extends AppCompatActivity {
                 }
             }
         });
-
-        rcvFood = findViewById(R.id.rcvFood);
-        rcvFood.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        rcvFood.setLayoutManager(layoutManager);
-
-        database = FirebaseDatabase.getInstance();
-        food = database.getReference("Food");
-
-        favorite = new Database(this);
-
-        // Get Category_ID from the previous activity
-        if(getIntent() != null){
-            category_id = getIntent().getStringExtra("category_id");
-        }
-
-        if(!category_id.isEmpty() && category_id != null){
-            if(Global.isConnectedToInternet(FoodList.this)){
-                loadFood(category_id);
-            }
-            else {
-                Toast.makeText(this, "Please check your Internet connection !", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
     }
 
     @Override
