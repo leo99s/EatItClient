@@ -1,6 +1,5 @@
 package pht.eatit;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -15,8 +14,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.share.model.SharePhoto;
@@ -42,8 +39,6 @@ import pht.eatit.model.Food;
 import pht.eatit.model.Order;
 import pht.eatit.onclick.ItemClickListener;
 import pht.eatit.viewholder.FoodViewHolder;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class FoodList extends AppCompatActivity {
 

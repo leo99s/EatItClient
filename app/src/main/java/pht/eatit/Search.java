@@ -1,6 +1,5 @@
 package pht.eatit;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -39,8 +38,6 @@ import pht.eatit.model.Food;
 import pht.eatit.model.Order;
 import pht.eatit.onclick.ItemClickListener;
 import pht.eatit.viewholder.FoodViewHolder;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Search extends AppCompatActivity {
 

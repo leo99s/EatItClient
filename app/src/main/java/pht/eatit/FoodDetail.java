@@ -1,6 +1,5 @@
 package pht.eatit;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -32,8 +31,6 @@ import pht.eatit.global.Global;
 import pht.eatit.model.Food;
 import pht.eatit.model.Order;
 import pht.eatit.model.Rating;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class FoodDetail extends AppCompatActivity implements RatingDialogListener {
 

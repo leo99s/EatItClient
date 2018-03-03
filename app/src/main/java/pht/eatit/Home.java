@@ -1,6 +1,5 @@
 package pht.eatit;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,10 +52,7 @@ import pht.eatit.model.Banner;
 import pht.eatit.model.Category;
 import pht.eatit.model.Token;
 import pht.eatit.onclick.ItemClickListener;
-import pht.eatit.service.FirebaseMessaging;
 import pht.eatit.viewholder.CategoryViewHolder;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

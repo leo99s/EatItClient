@@ -1,7 +1,6 @@
 package pht.eatit;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -80,8 +79,6 @@ import pht.eatit.viewholder.OrderAdapter;
 import pht.eatit.viewholder.OrderViewHolder;
 import retrofit2.Call;
 import retrofit2.Callback;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static java.lang.System.currentTimeMillis;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;

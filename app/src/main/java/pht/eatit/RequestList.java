@@ -1,6 +1,5 @@
 package pht.eatit;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,8 +16,6 @@ import com.google.firebase.database.Query;
 import pht.eatit.global.Global;
 import pht.eatit.model.Request;
 import pht.eatit.viewholder.RequestViewHolder;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class RequestList extends AppCompatActivity {
 

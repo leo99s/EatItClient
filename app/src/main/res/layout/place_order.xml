@@ -24,13 +24,11 @@
             android:id="@+id/edtMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:hint="Message"
-            android:textColorHint="@color/colorPrimary"
-            android:textColor="@color/colorPrimary"
             android:textSize="20sp"
             android:inputType="textMultiLine"
-            app:met_baseColor="@color/colorPrimary"
-            app:met_primaryColor="@color/colorPrimary"
             app:met_floatingLabel="highlight"
             app:met_singleLineEllipsis="true" />
 
@@ -38,7 +36,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
-            android:text="Delivery method" />
+            android:text="Delivery method"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold" />
 
         <RadioGroup
             android:layout_width="match_parent"
@@ -63,17 +63,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginLeft="6dp"
-            android:text="Payment method" />
+            android:text="Payment method"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold" />
 
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <RadioButton
-                android:id="@+id/rdiCash"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cash on delivery" />
 
             <RadioButton
                 android:id="@+id/rdiPaypal"
@@ -86,6 +82,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Balance" />
+
+            <RadioButton
+                android:id="@+id/rdiCash"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cash on delivery" />
 
         </RadioGroup>
 
