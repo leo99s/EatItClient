@@ -66,7 +66,7 @@ import pht.eatit.database.Database;
 import pht.eatit.global.Config;
 import pht.eatit.global.Global;
 import pht.eatit.helper.ItemTouch;
-import pht.eatit.model.DataMessage;
+import pht.eatit.model.Message;
 import pht.eatit.model.Order;
 import pht.eatit.model.Request;
 import pht.eatit.model.Response;
@@ -644,7 +644,7 @@ public class Cart extends AppCompatActivity implements
                     content.put("title", "Eat It");
                     content.put("message", "You have a new order : " + id_order);
 
-                    DataMessage notification = new DataMessage(serverToken.getToken(), content);
+                    Message notification = new Message(serverToken.getToken(), content);
 
                     mFCMService.sendNotification(notification)
                             .enqueue(new Callback<Response>() {

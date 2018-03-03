@@ -2,15 +2,15 @@ package pht.eatit.model;
 
 import java.util.Map;
 
-public class DataMessage {
+public class Message {
 
     public String to;
     public Map<String, String> data;
 
-    public DataMessage() {
+    public Message() {
     }
 
-    public DataMessage(String to, Map<String, String> data) {
+    public Message(String to, Map<String, String> data) {
         this.to = to;
         this.data = data;
     }
