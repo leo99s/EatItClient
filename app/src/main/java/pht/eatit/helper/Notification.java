@@ -59,4 +59,14 @@ public class Notification extends ContextWrapper {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(false);
     }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    public android.app.Notification.Builder getNotification(String title, String body, Uri sound){
+        return new android.app.Notification.Builder(getApplicationContext(), CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setSound(sound)
+                .setAutoCancel(false);
+    }
 }

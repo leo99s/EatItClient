@@ -50,21 +50,21 @@ public class Welcome extends AppCompatActivity {
 
     private static final int ACCOUNT_KIT_REQUEST_CODE = 7171;
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
+//    @Override
+//    protected void attachBaseContext(Context newBase) {
+//        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CalligraphyConfig.initDefault(
-                new CalligraphyConfig.Builder()
-                        .setDefaultFontPath("fonts/restaurant.otf")
-                        .setFontAttrId(R.attr.fontPath)
-                        .build()
-        );
+//        CalligraphyConfig.initDefault(
+//                new CalligraphyConfig.Builder()
+//                        .setDefaultFontPath("fonts/restaurant.otf")
+//                        .setFontAttrId(R.attr.fontPath)
+//                        .build()
+//        );
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         AccountKit.initialize(this);

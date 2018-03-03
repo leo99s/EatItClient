@@ -30,21 +30,8 @@ public class RequestList extends AppCompatActivity {
     FirebaseRecyclerAdapter<Request, RequestViewHolder> adapter;
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        CalligraphyConfig.initDefault(
-                new CalligraphyConfig.Builder()
-                        .setDefaultFontPath("fonts/restaurant.otf")
-                        .setFontAttrId(R.attr.fontPath)
-                        .build()
-        );
-
         setContentView(R.layout.activity_request_list);
 
         database = FirebaseDatabase.getInstance();

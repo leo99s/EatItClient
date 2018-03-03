@@ -61,16 +61,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import info.hoang8f.widget.FButton;
 import pht.eatit.database.Database;
 import pht.eatit.global.Config;
 import pht.eatit.global.Global;
 import pht.eatit.helper.ItemTouch;
-import pht.eatit.model.Notification;
+import pht.eatit.model.DataMessage;
 import pht.eatit.model.Order;
 import pht.eatit.model.Request;
 import pht.eatit.model.Response;
-import pht.eatit.model.Sender;
 import pht.eatit.model.Token;
 import pht.eatit.model.User;
 import pht.eatit.onclick.ItemSwipeListener;
@@ -114,7 +114,6 @@ public class Cart extends AppCompatActivity implements
 
     String address, message;
     LatLng latlng;
-    private static final int PAYPAL_REQUEST_CODE = 9999;
 
     // Location
     private LocationRequest mLocationRequest;
@@ -127,23 +126,11 @@ public class Cart extends AppCompatActivity implements
 
     private static final int LOCATION_REQUEST_CODE = 9999;
     private static final int PLAY_SERVICES_REQUEST_CODE = 9997;
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
+    private static final int PAYPAL_REQUEST_CODE = 9999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        CalligraphyConfig.initDefault(
-                new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/restaurant.otf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
-
         setContentView(R.layout.activity_cart);
 
         mFCMService = Global.getFCMAPI();
@@ -656,10 +643,13 @@ public class Cart extends AppCompatActivity implements
                 for(DataSnapshot childDataSnapshot : dataSnapshot.getChildren()){
                     Token serverToken = childDataSnapshot.getValue(Token.class);
 
-                    // Create raw payload to send
-                    Notification notification = new Notification("Eat It", "You have a new order : " + id_order);
-                    Sender content = new Sender(serverToken.getToken(), notification);
-                    mFCMService.sendNotification(content)
+                    Map<String, String> content = new HashMap<>();
+                    content.put("title", "Eat It");
+                    content.put("message", "You have a new order : " + id_order);
+
+                    DataMessage notification = new DataMessage(serverToken.getToken(), content);
+
+                    mFCMService.sendNotification(notification)
                             .enqueue(new Callback<Response>() {
                                 @Override
                                 public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {

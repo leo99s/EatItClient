@@ -54,21 +54,8 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
     Food currentFood;
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        CalligraphyConfig.initDefault(
-                new CalligraphyConfig.Builder()
-                        .setDefaultFontPath("fonts/restaurant.otf")
-                        .setFontAttrId(R.attr.fontPath)
-                        .build()
-        );
-
         setContentView(R.layout.activity_food_detail);
 
         collapsing_toolbar = findViewById(R.id.collapsing_toolbar);

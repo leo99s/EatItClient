@@ -34,19 +34,8 @@ public class CommentList extends AppCompatActivity {
     String food_id = "";
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/restaurent.otf")
-                .setFontAttrId(R.attr.fontPath)
-                .build());
-
         setContentView(R.layout.activity_comment_list);
 
         swipe_layout = findViewById(R.id.swipe_layout);
